@@ -1,0 +1,27 @@
+{
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/25.05";
+
+  inputs.roboenv.url = "github:nnctroboticsclub/roboenv-nix";
+
+  outputs =
+    { nixpkgs, roboenv, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+      rpkgs = roboenv.legacyPackages.${system};
+    in
+    {
+      packages.x86_64-linux.default = rpkgs.rlib.buildCMakeProject {
+        pname = "nano";
+        version = "v0.1.0";
+        src = ./.;
+
+        cmakeBuildInputs = [
+          rpkgs.clang-arm-toolchain
+          rpkgs.cmake-libs
+        ];
+      };
+    };
+}
