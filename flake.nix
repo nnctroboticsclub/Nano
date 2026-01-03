@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/25.05";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/release-25.11";
 
   inputs.roboenv.url = "github:nnctroboticsclub/roboenv-nix";
 

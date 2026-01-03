@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
 cmake_policy(VERSION 3.25)
 
-set(ROBO_TOOLCHAIN_FILE ClangArmToolchain)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(ROBO_TOOLCHAIN_FILE ClangToolchain)
 
 project(Nano)
-
 enable_testing()
 enable_language(C CXX ASM)
 
