@@ -54,7 +54,7 @@ TEST(FixedMapTest, Contains) {
 TEST(FixedMapTest, OverwriteValue) {
   FixedMap<int, int, kMapSize> map;
 
-  map[1] = 100;
+  map[1] = 100;  // NOLINT
   EXPECT_EQ(*map.Find(1), 100);
 
   map[1] = 999;
@@ -66,8 +66,8 @@ TEST(FixedMapTest, StringKey) {
   FixedMap<std::string, int, kMapSize> map;
 
   map["one"] = 1;
-  map["two"] = 2;
-  map["three"] = 3;
+  map["two"] = 2;    // NOLINT
+  map["three"] = 3;  // NOLINT
 
   EXPECT_TRUE(map.Contains("one"));
   EXPECT_TRUE(map.Contains("two"));

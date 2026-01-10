@@ -95,3 +95,30 @@ target_link_libraries(NanoTest_LinkedList
     GTest::gtest_main
 )
 add_test(NAME NanoTest_LinkedList COMMAND NanoTest_LinkedList)
+
+add_executable(NanoTest_Angle tests/test_angle.cpp)
+target_link_libraries(NanoTest_Angle
+  PUBLIC
+    Nano::Nano
+    GTest::gtest
+    GTest::gtest_main
+)
+add_test(NAME NanoTest_Angle COMMAND NanoTest_Angle)
+
+add_executable(NanoTest_Result tests/test_result.cpp)
+target_link_libraries(NanoTest_Result
+  PUBLIC
+    Nano::Nano
+    GTest::gtest
+    GTest::gtest_main
+)
+add_test(NAME NanoTest_Result COMMAND NanoTest_Result)
+
+add_executable(NanoTest_Vector tests/test_vector.cpp)
+target_link_libraries(NanoTest_Vector
+  PUBLIC
+    Nano::Nano
+    GTest::gtest
+    GTest::gtest_main
+)
+add_test(NAME NanoTest_Vector COMMAND NanoTest_Vector)
