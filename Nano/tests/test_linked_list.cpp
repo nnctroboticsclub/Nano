@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
-#include <Nano/linked_list_node.hpp>
+#include <Nano/linked_list.hpp>
 
-using namespace robotics::utils;
+using nano::collection::LinkedList;
+using nano::collection::LinkedListNode;
 
 constexpr size_t kListSize = 10;
 

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Nano/singleton.hpp>
 
-using namespace robotics::utils;
+using nano::utils::Singleton;
 
 // テスト用のシングルトンクラス
 class TestSingleton : public Singleton<TestSingleton> {

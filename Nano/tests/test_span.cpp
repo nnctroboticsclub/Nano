@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Nano/span.hpp>
 
-using namespace robotics::utils;
+using nano::collection::Span;
 
 // Span の基本的なコンストラクタテスト
 TEST(SpanTest, BasicConstruction) {

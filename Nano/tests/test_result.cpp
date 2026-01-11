@@ -2,7 +2,9 @@
 #include <Nano/result.hpp>
 #include <string>
 
-using namespace robotics::types;
+using nano::utils::Err;
+using nano::utils::Ok;
+using nano::utils::Result;
 
 // 基本的なOk結果のテスト
 TEST(ResultTest, BasicOkValue) {

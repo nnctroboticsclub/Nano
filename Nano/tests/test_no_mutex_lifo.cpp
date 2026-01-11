@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Nano/no_mutex_lifo.hpp>
 
-using namespace robotics::utils;
+using nano::collection::NoMutexLIFO;
 
 constexpr size_t kBufferSize = 8;
 

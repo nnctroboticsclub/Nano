@@ -1,11 +1,10 @@
 #pragma once
 
 #include <optional>
-#include <stdexcept>
 #include <type_traits>
 #include <variant>
 
-namespace robotics::inline types {
+namespace nano::utils::result {
 template <typename E>
 struct ResultErrorType {
   E error;
@@ -78,4 +77,10 @@ static ResultErrorType<E> Err(E error) {
   return ResultErrorType<E>{error};
 }
 
-}  // namespace robotics::inline types
+}  // namespace nano::utils::result
+
+namespace nano::utils {
+using result::Err;
+using result::Ok;
+using result::Result;
+}  // namespace nano::utils

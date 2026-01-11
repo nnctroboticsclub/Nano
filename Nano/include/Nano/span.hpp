@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace robotics::utils {
+namespace nano::collection {
 template <typename T>
 class Span {
  public:
@@ -14,16 +14,20 @@ class Span {
   Span(Span<T>& other) = default;
 
   template <typename U>
-  Span(const Span<U>& other) requires std::is_convertible_v<U*, T*>
+  explicit(false)
+      Span(const Span<U>& other) requires std::is_convertible_v<U*, T*>
       : data_(other.data()), size_(other.size()) {}
 
   T* data() const { return data_; }
   [[nodiscard]] size_t size() const { return size_; }
 
-  T& operator[](size_t index) { return data_[index]; }
+  T& operator[](size_t index) {
+    // NOLINTNEXTLINE (cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    return data_[index];
+  }
 
  private:
   T* data_;
   size_t size_;
 };
-}  // namespace robotics::utils
+}  // namespace nano::collection

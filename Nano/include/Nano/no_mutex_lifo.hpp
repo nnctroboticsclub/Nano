@@ -3,7 +3,7 @@
 #include <array>
 #include <cstddef>
 
-namespace robotics::utils {
+namespace nano::collection {
 template <typename T, size_t N>
 class NoMutexLIFO {
   /**
@@ -50,7 +50,6 @@ class NoMutexLIFO {
    * Process:
    *   tail_ = (tail_ + 1) % N
    *   auto data = buffer_[tail_]
-   *
    */
 
   std::array<T, N> buffer_ = {};
@@ -141,9 +140,9 @@ class NoMutexLIFO {
   }
 
   size_t PopAllTo(T* data) {
-    auto n = Size();
-    PopNTo(n, data);
-    return n;
+    auto data_count = Size();
+    PopNTo(data_count, data);
+    return data_count;
   }
 
   T Pop() {
@@ -172,4 +171,4 @@ class NoMutexLIFO {
   size_t Capacity() const { return N; }
 };
 
-}  // namespace robotics::utils
+}  // namespace nano::collection

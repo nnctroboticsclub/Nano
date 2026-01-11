@@ -1,7 +1,7 @@
 #include <array>
 #include <cstddef>
 
-namespace robotics::utils {
+namespace nano::collection {
 template <typename T, std::size_t N>
 class ManagedList {
   std::array<T, N> pool_ = {};
@@ -20,4 +20,4 @@ class ManagedList {
   T* end() { return pool_.data() + N; }
 };
 
-}  // namespace robotics::utils
+}  // namespace nano::collection
