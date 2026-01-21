@@ -76,7 +76,7 @@ enum HAL_StatusTypeDef {
 };
 struct HAL_CAN_TypeDef {};
 HAL_StatusTypeDef HAL_CAN_ConfigFilter(HAL_CAN_TypeDef* hcan,
-                                       CAN_FilterConfTypeDef* sFilterConfig) {}
+                                       CAN_FilterConfTypeDef* sFilterConfig);
 // LL API
 struct can_t {
   HAL_CAN_TypeDef CanHandle;

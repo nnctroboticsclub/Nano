@@ -26,7 +26,7 @@ function(add_nano_test test_name test_source)
 endfunction()
 
 add_subdirectory(MbedIF)
-add_subdirectory(MockImpl)
+add_subdirectory(StubImpl)
 add_subdirectory(Nano)
 add_subdirectory(NanoHW)
 add_subdirectory(NanoTsBin)
