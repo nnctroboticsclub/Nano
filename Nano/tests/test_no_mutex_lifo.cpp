@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Nano/no_mutex_lifo.hpp>
 
-using nano::collection::NoMutexLIFO;
+using Nano::collection::NoMutexLIFO;
 
 constexpr size_t kBufferSize = 8;
 

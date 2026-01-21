@@ -2,7 +2,7 @@
 #include <Nano/fixed_map.hpp>
 #include <string>
 
-using nano::collection::FixedMap;
+using Nano::collection::FixedMap;
 
 constexpr size_t kMapSize = 10;
 

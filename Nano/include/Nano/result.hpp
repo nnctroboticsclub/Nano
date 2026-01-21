@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <variant>
 
-namespace nano::utils::result {
+namespace Nano::utils::result {
 template <typename E>
 struct ResultErrorType {
   E error;
@@ -77,10 +77,10 @@ static ResultErrorType<E> Err(E error) {
   return ResultErrorType<E>{error};
 }
 
-}  // namespace nano::utils::result
+}  // namespace Nano::utils::result
 
-namespace nano::utils {
+namespace Nano::utils {
 using result::Err;
 using result::Ok;
 using result::Result;
-}  // namespace nano::utils
+}  // namespace Nano::utils

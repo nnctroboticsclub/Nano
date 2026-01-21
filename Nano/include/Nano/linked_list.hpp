@@ -3,7 +3,7 @@
 #include <array>
 #include <iterator>
 
-namespace nano::collection {
+namespace Nano::collection {
 template <typename T>
 class LinkedListNode {
  public:
@@ -124,4 +124,4 @@ class LinkedList {
   T* head_ = nullptr;
   T* tail_ = nullptr;
 };
-}  // namespace nano::collection
+}  // namespace Nano::collection

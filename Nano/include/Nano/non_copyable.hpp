@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nano::utils {
+namespace Nano::utils {
 /// @brief コピー不可を表すクラス
 template <typename T>
 class NonCopyable {
@@ -12,4 +12,4 @@ class NonCopyable {
   NonCopyable(const NonCopyable&) = delete;
   NonCopyable& operator=(const NonCopyable&) = delete;
 };
-}  // namespace nano::utils
+}  // namespace Nano::utils

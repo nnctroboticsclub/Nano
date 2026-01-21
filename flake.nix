@@ -19,7 +19,6 @@
         src = ./.;
 
         cmakeBuildInputs = [
-          rpkgs.clang-arm-toolchain
           rpkgs.cmake-libs
         ];
       };

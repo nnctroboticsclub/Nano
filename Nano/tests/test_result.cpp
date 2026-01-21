@@ -2,9 +2,9 @@
 #include <Nano/result.hpp>
 #include <string>
 
-using nano::utils::Err;
-using nano::utils::Ok;
-using nano::utils::Result;
+using Nano::utils::Err;
+using Nano::utils::Ok;
+using Nano::utils::Result;
 
 // 基本的なOk結果のテスト
 TEST(ResultTest, BasicOkValue) {

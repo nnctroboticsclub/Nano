@@ -8,10 +8,47 @@ project(Nano)
 enable_testing()
 enable_language(C CXX ASM)
 
+find_package(GTest REQUIRED)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-# common sub-directories
+function(add_nano_test test_name test_source)
+  add_executable(${test_name} ${test_source})
+  target_link_libraries(${test_name}
+    PUBLIC
+      Nano::Nano
+      GTest::gtest
+      GTest::gtest_main
+  )
+  add_test(NAME ${test_name} COMMAND ${test_name})
+endfunction()
+
+add_subdirectory(MbedIF)
+add_subdirectory(MockImpl)
 add_subdirectory(Nano)
-add_subdirectory(Mbed)
+add_subdirectory(NanoHW)
+add_subdirectory(NanoTsBin)
+add_subdirectory(NanoTsLib)
+
+
+# Install export
+install(EXPORT NanoTargets
+  FILE NanoTargets.cmake
+  NAMESPACE Nano::
+  DESTINATION lib/cmake/Nano
+)
+
+# Create config file
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/NanoConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/NanoConfig.cmake
+  INSTALL_DESTINATION lib/cmake/Nano
+)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/NanoConfig.cmake
+  DESTINATION lib/cmake/Nano
+)

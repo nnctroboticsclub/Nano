@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace nano::collection {
+namespace Nano::collection {
 template <typename T>
 class Span {
  public:
@@ -30,4 +30,4 @@ class Span {
   T* data_;
   size_t size_;
 };
-}  // namespace nano::collection
+}  // namespace Nano::collection

@@ -3,7 +3,7 @@
 #include <array>
 #include <cstddef>
 
-namespace nano::collection {
+namespace Nano::collection {
 template <typename T, size_t N>
 class NoMutexLIFO {
   /**
@@ -171,4 +171,4 @@ class NoMutexLIFO {
   size_t Capacity() const { return N; }
 };
 
-}  // namespace nano::collection
+}  // namespace Nano::collection

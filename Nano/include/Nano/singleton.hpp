@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nano::utils {
+namespace Nano::utils {
 template <typename T>
 class Singleton {
  public:
@@ -17,4 +17,4 @@ class Singleton {
   Singleton() = default;
   ~Singleton() = default;
 };
-}  // namespace nano::utils
+}  // namespace Nano::utils

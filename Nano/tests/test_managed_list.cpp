@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Nano/managed_list.hpp>
 
-using nano::collection::ManagedList;
+using Nano::collection::ManagedList;
 
 constexpr size_t kPoolSize = 10;
 

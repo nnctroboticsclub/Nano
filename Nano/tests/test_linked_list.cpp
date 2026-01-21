@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <Nano/linked_list.hpp>
 
-using nano::collection::LinkedList;
-using nano::collection::LinkedListNode;
+using Nano::collection::LinkedList;
+using Nano::collection::LinkedListNode;
 
 constexpr size_t kListSize = 10;
 

@@ -2,7 +2,7 @@
 
 #include "managed_list.hpp"
 
-namespace nano::collection {
+namespace Nano::collection {
 /// @tparam N max count of key-value pairs
 template <typename K, typename V, std::size_t N>
 class FixedMap {
@@ -51,4 +51,4 @@ class FixedMap {
   auto begin() { return keys_.begin(); }
   auto end() { return keys_.end(); }
 };
-}  // namespace nano::collection
+}  // namespace Nano::collection
