@@ -1,4 +1,4 @@
-add_library(NanoHW STATIC src/can.cpp)
+add_library(NanoHW STATIC src/can.cpp src/timer.cpp)
 add_library(Nano::NanoHW ALIAS NanoHW)
 target_include_directories(NanoHW PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

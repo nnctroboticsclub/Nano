@@ -2,13 +2,16 @@
 
 #include <cstddef>
 #include <functional>
+#include "Nano/no_mutex_lifo.hpp"
 namespace mbed {
 template <typename T, size_t N>
 class CircularBuffer {
+  Nano::collection::NoMutexLIFO<T, N> buffer;
+
  public:
-  void push(T);
-  bool empty();
-  void pop(T&);
+  void push(T value) { buffer.Push(std::move(value)); }
+  [[nodiscard]] bool empty() const { return buffer.Empty(); }
+  void pop(T& value) { value = buffer.Pop(); }
 };
 
 template <typename T>

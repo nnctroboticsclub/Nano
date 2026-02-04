@@ -6,9 +6,9 @@
 
 #include <NanoHW/can.hpp>
 
-#include "NanoMbed/common.hpp"
-#include "NanoMbed/hal.hpp"
-#include "mbed.h"
+#include "../mbed.h"
+#include "common.hpp"
+#include "hal.hpp"
 #include "pin_name.hpp"
 
 namespace mbed {
@@ -220,8 +220,8 @@ class CAN {
       HAL_CAN_TypeDef* hcan, CAN_FilterConfTypeDef* sFilterConfig);
 };
 
-HAL_StatusTypeDef HAL_CAN_ConfigFilter(HAL_CAN_TypeDef* hcan,
-                                       CAN_FilterConfTypeDef* sFilterConfig) {
+inline HAL_StatusTypeDef HAL_CAN_ConfigFilter(
+    HAL_CAN_TypeDef* hcan, CAN_FilterConfTypeDef* sFilterConfig) {
   nano_hw::can::CANFilter filter;
   const uint32_t id =
       sFilterConfig->FilterIdHigh << 16 | sFilterConfig->FilterIdLow;
