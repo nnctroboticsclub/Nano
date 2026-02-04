@@ -1,12 +1,10 @@
-add_library(NanoHW_MbedIF STATIC
-  source/digital_out.cpp
-)
+add_library(NanoHW_MbedIF INTERFACE)
 add_library(Nano::NanoHW_MbedIF ALIAS NanoHW_MbedIF)
-target_include_directories(NanoHW_MbedIF PUBLIC
+target_include_directories(NanoHW_MbedIF INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/Nano/NanoHW_MbedIF>
 )
-target_link_libraries(NanoHW_MbedIF PUBLIC Nano::NanoHW)
+target_link_libraries(NanoHW_MbedIF INTERFACE Nano::NanoHW)
 
 # Install targets
 install(TARGETS NanoHW_MbedIF

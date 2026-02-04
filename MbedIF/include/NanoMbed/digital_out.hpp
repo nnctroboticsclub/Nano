@@ -11,6 +11,12 @@ class DigitalOut {
   void write(bool state) { dri_.Write(state); }
   bool read() { return dri_.Read(); }
 
+  operator bool() { return read(); }
+  DigitalOut& operator=(bool value) {
+    write(value);
+    return *this;
+  }
+
  private:
   nano_hw::DynDigitalOut dri_;
 };
