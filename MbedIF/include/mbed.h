@@ -9,6 +9,7 @@
 #include <NanoMbed/digital_out.hpp>
 #include <NanoMbed/spi.hpp>
 #include <NanoMbed/timer.hpp>
+#include <NanoMbed/uart.hpp>
 
 namespace mbed {
 
