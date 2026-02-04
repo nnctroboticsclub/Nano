@@ -1,6 +1,6 @@
-add_library(NanoHW INTERFACE)
+add_library(NanoHW STATIC src/can.cpp)
 add_library(Nano::NanoHW ALIAS NanoHW)
-target_include_directories(NanoHW INTERFACE
+target_include_directories(NanoHW PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/NanoHW>
 )
