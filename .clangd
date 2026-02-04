@@ -25,6 +25,7 @@ Diagnostics:
       - altera-unroll-loops
       - cppcoreguidelines-special-member-functions
       - hicpp-special-member-functions
+      - altera-struct-pack-align
 
     CheckOptions:
       readability-identifier-naming.VariableCase: snake_case

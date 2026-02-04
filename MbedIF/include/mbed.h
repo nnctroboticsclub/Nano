@@ -6,6 +6,7 @@
 
 #include <NanoMbed/can.hpp>
 #include <NanoMbed/digital_out.hpp>
+#include "NanoHW/parallel.hpp"
 
 namespace mbed {
 
@@ -20,7 +21,9 @@ class Timer {
 
 // RTOS
 namespace ThisThread {
-void sleep_for(std::chrono::milliseconds ms);
+void sleep_for(std::chrono::milliseconds ms) {
+  nano_hw::parallel::SleepForMS(ms);
+}
 }  // namespace ThisThread
 }  // namespace mbed
 
