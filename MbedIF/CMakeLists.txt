@@ -21,3 +21,6 @@ install(DIRECTORY include/
 
 add_nano_test(Test_NanoHW_MbedIF_CAN tests/can.cpp)
 target_link_libraries(Test_NanoHW_MbedIF_CAN PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)
+
+add_nano_test(Test_NanoHW_MbedIF_SPI tests/spi.cpp)
+target_link_libraries(Test_NanoHW_MbedIF_SPI PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)

@@ -7,6 +7,7 @@
 #include <NanoHW/parallel.hpp>
 #include <NanoMbed/can.hpp>
 #include <NanoMbed/digital_out.hpp>
+#include <NanoMbed/spi.hpp>
 #include <NanoMbed/timer.hpp>
 
 namespace mbed {

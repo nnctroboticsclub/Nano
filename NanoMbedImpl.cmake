@@ -22,6 +22,7 @@ function(nano_hw_mbed_impl impl_target mbed_target)
   add_library(${impl_target} STATIC
     ${MBED_IMPL_SOURCE_DIR}/digital_out.cpp
     ${MBED_IMPL_SOURCE_DIR}/can.cpp
+    ${MBED_IMPL_SOURCE_DIR}/spi.cpp
     ${MBED_IMPL_SOURCE_DIR}/rtos.cpp
     ${MBED_IMPL_SOURCE_DIR}/timer.cpp
   )

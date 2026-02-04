@@ -1,6 +1,7 @@
 add_library(NanoHW_StubImpl STATIC
   source/digital_out.cpp
   source/can.cpp
+  source/spi.cpp
   source/rtos.cpp
   source/timer.cpp
 )
