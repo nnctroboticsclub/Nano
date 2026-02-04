@@ -1,17 +1,18 @@
 #include "NanoHW/digital_out.hpp"
-#include <iostream>
 #include "NanoHW/pin.hpp"
+
+#include <iostream>
 
 class MockDigitalOut {
  public:
-  MockDigitalOut(nano_hw::Pin pin) : pin_(pin) {}
+  explicit MockDigitalOut(nano_hw::Pin pin) : pin_(pin) {}
 
-  void Write(bool state) {
+  void Write(bool state) const {
     std::cout << "DigitalOut on pin " << pin_.number << " set to " << state
               << "\n";
   }
 
-  bool Read() {
+  bool Read() const {
     std::cout << "DigitalOut on pin " << pin_.number << " read\n";
     return false;  // Mock always returns false
   }
