@@ -66,7 +66,6 @@ concept CAN =
 
 struct ICallbacks {
  public:
-  virtual ~ICallbacks();
   virtual void OnCANReceived(void* context, CANMessage msg) = 0;
   virtual void OnCANTransmit(void* context, CANMessage msg) = 0;
   virtual void OnCANBusError(void* context) = 0;
@@ -87,7 +86,6 @@ template <CANConfig Config>
 class DynCAN {
   struct Callbacks : public ICallbacks {
    public:
-    ~Callbacks() override = default;
     void OnCANReceived(void* context, CANMessage msg) final {
       Config::OnCANReceived::execute(context, msg);
     }

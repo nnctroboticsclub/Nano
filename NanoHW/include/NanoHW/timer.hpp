@@ -27,7 +27,6 @@ concept Timer = requires(TimerT<DummyTimerConfig> value) {
 
 // Callback interface with instance context support
 struct ICallbacks {
-  virtual ~ICallbacks();
   virtual void OnTick(void* context) = 0;
 };
 
@@ -42,7 +41,6 @@ template <TimerConfig Config>
 class DynTimer {
   struct Callbacks : public ICallbacks {
    public:
-    ~Callbacks() override = default;
     void OnTick(void* context) final { Config::OnTick::execute(context); }
   };
 
