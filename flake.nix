@@ -1,7 +1,7 @@
 {
   inputs.nixpkgs.url = "github:nixos/nixpkgs/release-25.11";
 
-  inputs.roboenv.url = "github:nnctroboticsclub/roboenv-nix";
+  inputs.roboenv.url = "git+ssh://git@github.com/nnctroboticsclub/roboenv-nix.git";
 
   outputs =
     { nixpkgs, roboenv, ... }:
@@ -15,11 +15,14 @@
     {
       packages.x86_64-linux.default = rpkgs.rlib.buildCMakeProject {
         pname = "nano";
-        version = "v0.1.0";
+        version = "v0.2.0";
         src = ./.;
 
         cmakeBuildInputs = [
           rpkgs.cmake-libs
+        ];
+        nativeBuildInputs = [
+          pkgs.gtest
         ];
       };
     };

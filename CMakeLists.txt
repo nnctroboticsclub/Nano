@@ -27,10 +27,9 @@ endfunction()
 
 add_subdirectory(MbedIF)
 add_subdirectory(StubImpl)
+add_subdirectory(MbedImpl)
 add_subdirectory(Nano)
 add_subdirectory(NanoHW)
-add_subdirectory(NanoTsBin)
-add_subdirectory(NanoTsLib)
 
 
 # Install export
@@ -39,6 +38,22 @@ install(EXPORT NanoTargets
   NAMESPACE Nano::
   DESTINATION lib/cmake/Nano
 )
+
+# Install MbedImpl helper
+install(FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/NanoMbedImpl.cmake
+  DESTINATION lib/cmake/Nano
+)
+
+# Install MbedImpl sources
+install(DIRECTORY
+  ${CMAKE_CURRENT_SOURCE_DIR}/MbedImpl/source/
+  DESTINATION lib/cmake/Nano/MbedImpl/source
+  FILES_MATCHING PATTERN "*.cpp" PATTERN "*.h" PATTERN "*.hpp"
+)
+
+# Set MbedImpl source paths for install
+set(NANO_MBED_IMPL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/MbedImpl/source")
 
 # Create config file
 include(CMakePackageConfigHelpers)

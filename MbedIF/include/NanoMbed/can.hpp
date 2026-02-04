@@ -1,9 +1,8 @@
 #pragma once
 
 #include <cstring>
-#include <mutex>
-#include <queue>
 
+#include <Nano/no_mutex_lifo.hpp>
 #include <NanoHW/can.hpp>
 
 #include "../mbed.h"
@@ -87,8 +86,7 @@ class CAN {
         if (can == nullptr) {
           return;
         }
-        std::lock_guard<std::mutex> lock(can->rx_mutex);
-        can->rx_queue.push(msg);
+        can->rx_queue.Push(msg);
 
         if (can->rx_callback) {
           can->rx_callback();
@@ -168,15 +166,12 @@ class CAN {
 
   int read(CANMessage& msg, int handle = 0) {
     (void)handle;
-    std::lock_guard<std::mutex> lock(rx_mutex);
-
-    if (rx_queue.empty()) {
+    if (rx_queue.Empty()) {
       return 0;  // No message available
     }
 
     // Get message from queue
-    nano_hw::can::CANMessage nano_msg = rx_queue.front();
-    rx_queue.pop();
+    nano_hw::can::CANMessage nano_msg = rx_queue.Pop();
 
     // Convert to mbed::CANMessage
     msg = CANMessage::from_nano_hw(nano_msg);
@@ -206,8 +201,7 @@ class CAN {
   can_t _can;
 
  private:
-  std::queue<nano_hw::can::CANMessage> rx_queue;
-  std::mutex rx_mutex;
+  Nano::collection::NoMutexLIFO<nano_hw::can::CANMessage, 32> rx_queue;
 
   Callback<void()> rx_callback{};
   Callback<void()> tx_callback{};

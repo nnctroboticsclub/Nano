@@ -2,7 +2,7 @@ add_library(NanoHW_MbedIF INTERFACE)
 add_library(Nano::NanoHW_MbedIF ALIAS NanoHW_MbedIF)
 target_include_directories(NanoHW_MbedIF INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/Nano/NanoHW_MbedIF>
+  $<INSTALL_INTERFACE:include/NanoHW/MbedIF>
 )
 target_link_libraries(NanoHW_MbedIF INTERFACE Nano::NanoHW)
 
@@ -14,6 +14,10 @@ install(TARGETS NanoHW_MbedIF
 
 # Install headers
 install(DIRECTORY include/
-  DESTINATION include/Nano/NanoHW_MbedIF
+  DESTINATION include/NanoHW/MbedIF
   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
+
+
+add_nano_test(Test_NanoHW_MbedIF_CAN tests/can.cpp)
+target_link_libraries(Test_NanoHW_MbedIF_CAN PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)

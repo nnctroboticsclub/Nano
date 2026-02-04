@@ -2,16 +2,16 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1748026580,
-        "narHash": "sha256-rWtXrcIzU5wm/C8F9LWvUfBGu5U5E7cFzPYT1pHIJaQ=",
+        "lastModified": 1770169531,
+        "narHash": "sha256-/vOmLlgE9jnAiF6A1Gmw8Bwp8PlbI6rNKqJAA4X0P40=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "11cb3517b3af6af300dd6c055aeda73c9bf52c48",
+        "rev": "809d16bdf5ab8e32905292678373f497db75ffd0",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "25.05",
+        "ref": "release-25.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -38,14 +38,17 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1766709785,
-        "narHash": "sha256-aqULkcJCvvh4JkCf4fc+ZbDY1+FMwNDfMKvrgnSVrqU=",
-        "path": "/home/syoch/ghq/github.com/syoch/libs-dev/libs/roboenv-nix",
-        "type": "path"
+        "lastModified": 1767242466,
+        "narHash": "sha256-xVRJ+Ju9dpOm3a7FfT9P8wh4KE4PevQTG0QwlmVjaik=",
+        "ref": "refs/heads/main",
+        "rev": "409a719e400e7d6916c78c20a7f5820f3382b2c5",
+        "revCount": 49,
+        "type": "git",
+        "url": "ssh://git@github.com/nnctroboticsclub/roboenv-nix.git"
       },
       "original": {
-        "path": "/home/syoch/ghq/github.com/syoch/libs-dev/libs/roboenv-nix",
-        "type": "path"
+        "type": "git",
+        "url": "ssh://git@github.com/nnctroboticsclub/roboenv-nix.git"
       }
     },
     "root": {
