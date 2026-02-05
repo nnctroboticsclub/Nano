@@ -4,6 +4,7 @@
 
 #include <NanoHW/timer.hpp>
 
+namespace {
 namespace mbed {
 
 // Forward declaration
@@ -43,6 +44,10 @@ class Timer {
 
   std::chrono::milliseconds read() { return dri_.Read(); }
 
+  std::chrono::microseconds elapsed_time() {
+    return std::chrono::duration_cast<std::chrono::microseconds>(dri_.Read());
+  }
+
   // Attach callback for tick interrupt
   void attach(void (*func)()) { data_->tick_callback = func; }
 
@@ -69,3 +74,4 @@ inline void MbedTimerConfig::OnTick::execute(void* context) {
 }
 
 }  // namespace mbed
+}  // namespace

@@ -5,45 +5,14 @@
 #include <Nano/no_mutex_lifo.hpp>
 #include <NanoHW/can.hpp>
 
-#include "../mbed.h"
+#include "can_api.h"
 #include "common.hpp"
 #include "hal.hpp"
 #include "pin_name.hpp"
 
+namespace {
 namespace mbed {
 
-// CANMessage compatible with mbed API
-struct CANMessage {
-  uint32_t id = 0;
-  uint8_t data[8]{};
-  uint8_t len = 0;
-
-  CANMessage() = default;
-
-  CANMessage(uint32_t id, uint8_t* data, uint8_t len) : id(id), len(len) {
-    std::memcpy(this->data, data, len);
-  }
-
-  // Convert to nano_hw::can::CANMessage
-  explicit operator nano_hw::can::CANMessage() const {
-    nano_hw::can::CANMessage msg;
-    msg.id = this->id;
-    msg.len = this->len;
-    std::memcpy(msg.data, this->data, this->len);
-    return msg;
-  }
-
-  // Convert from nano_hw::can::CANMessage
-  static CANMessage from_nano_hw(const nano_hw::can::CANMessage& nano_msg) {
-    CANMessage msg;
-    msg.id = nano_msg.id;
-    msg.len = nano_msg.len;
-    std::memcpy(msg.data, nano_msg.data, nano_msg.len);
-    return msg;
-  }
-};
-
-enum CANFormat : uint8_t { CANStandard, CANExtended, CANAny };
 enum CANFilterMode_t : uint8_t {
   CAN_FILTERMODE_IDMASK = 0,
   CAN_FILTERMODE_IDLIST = 1,
@@ -68,14 +37,6 @@ struct CAN_FilterConfTypeDef {
   CANFilterFIFO_t FilterFIFOAssignment;
   EnableState FilterActivation;
   uint8_t BankNumber;
-};
-
-struct HAL_CAN_TypeDef {
-  class CAN* can;
-};
-
-struct can_t {
-  HAL_CAN_TypeDef CanHandle;
 };
 
 class CAN {
@@ -142,7 +103,7 @@ class CAN {
   };
 
   CAN(PinName receive_pin, PinName send_pin)
-      : CAN(receive_pin, send_pin, (size_t)1e6) {}
+      : CAN(receive_pin, send_pin, static_cast<size_t>(1e6)) {}
 
   CAN(PinName receive_pin, PinName send_pin, int frequency)
       : dri_(ToPin(send_pin), ToPin(receive_pin), frequency, this), _can() {
@@ -180,38 +141,41 @@ class CAN {
 
   void reset() { dri_.ResetPeripherals(); }
 
-  void attach(Callback<void()> cb, IrqType irq_type) {
+  void attach(Callback<void()> const& handler, IrqType irq_type) {
     switch (irq_type) {
       case RxIrq:
-        rx_callback = cb;
+        rx_callback = handler;
         break;
       case TxIrq:
-        tx_callback = cb;
+        tx_callback = handler;
         break;
       case BeIrq:
-        bus_error_callback = cb;
+        bus_error_callback = handler;
         break;
       case EpIrq:
-        passive_error_callback = cb;
+        passive_error_callback = handler;
         break;
     }
   }
 
  protected:
-  can_t _can;
+  can_t _can;  // NOLINT
 
  private:
-  Nano::collection::NoMutexLIFO<nano_hw::can::CANMessage, 32> rx_queue;
+  constexpr static size_t kRxQueueSize = 32;
+  Nano::collection::NoMutexLIFO<nano_hw::can::CANMessage, kRxQueueSize>
+      rx_queue;
 
-  Callback<void()> rx_callback{};
-  Callback<void()> tx_callback{};
-  Callback<void()> bus_error_callback{};
-  Callback<void()> passive_error_callback{};
+  Callback<void()> rx_callback;
+  Callback<void()> tx_callback;
+  Callback<void()> bus_error_callback;
+  Callback<void()> passive_error_callback;
 
   nano_hw::can::DynCAN<MbedCANConfig> dri_;
 
   friend HAL_StatusTypeDef HAL_CAN_ConfigFilter(
       HAL_CAN_TypeDef* hcan, CAN_FilterConfTypeDef* sFilterConfig);
+  friend int can_read(can_t* obj, CANMessage* msg, int handle);
 };
 
 inline HAL_StatusTypeDef HAL_CAN_ConfigFilter(
@@ -235,4 +199,21 @@ inline HAL_StatusTypeDef HAL_CAN_ConfigFilter(
   return HAL_OK;
 }
 
+inline int can_read(can_t* obj, CANMessage* msg, int handle) {
+  (void)handle;
+  nano_hw::can::CANMessage nano_msg;
+  bool result = nano_hw::can::ReceiveRawImpl(obj->CanHandle.can, nano_msg);
+  if (!result) {
+    return 0;  // No message arrived
+  }
+
+  // Convert to CANMessage
+  msg->id = nano_msg.id;
+  msg->len = nano_msg.len;
+  std::memcpy(msg->data, nano_msg.data, nano_msg.len);
+  return 1;  // Message arrived
+}
+
 }  // namespace mbed
+
+}  // namespace

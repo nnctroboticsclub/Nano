@@ -25,7 +25,6 @@
 // clang-format on
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
-namespace mbed {
 enum PinName : uint16_t {
   PINS(A),
   PINS(B),
@@ -37,6 +36,8 @@ enum PinName : uint16_t {
   PINS(H),
   NC = 0xFFFF
 };
+static_assert(PB_8 == 0x18);
+static_assert(PB_9 == 0x19);
 
 inline nano_hw::Pin ToPin(PinName pin) {
   return nano_hw::Pin{static_cast<uint16_t>(pin)};
@@ -45,7 +46,6 @@ inline nano_hw::Pin ToPin(PinName pin) {
 inline PinName FromPin(const nano_hw::Pin& pin) {
   return static_cast<PinName>(pin.number);
 }
-}  // namespace mbed
 
 #undef PAD_NUM_A
 #undef PAD_NUM_B

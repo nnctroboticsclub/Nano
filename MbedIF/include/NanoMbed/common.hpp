@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <functional>
 #include "Nano/no_mutex_lifo.hpp"
+
+namespace {
 namespace mbed {
 template <typename T, size_t N>
 class CircularBuffer {
@@ -26,18 +28,26 @@ class Callback<R(Args...)> {
   Callback() : _func(nullptr) {}
 
   template <typename T>
-  Callback(T* obj, R (T::*method)(Args...)) {
-    _func = [obj, method](Args... args) {
-      return (obj->*method)(args...);
-    };
+  Callback(T* obj, R (T::*method)(Args...))
+      : _func([obj, method](Args... args) { return (obj->*method)(args...); }) {
+
   }
 
-  Callback(R (*func)(Args...)) { _func = func; }
+  explicit(false) Callback(R (*func)(Args...)) : _func(func) {}
 
-  Callback(std::function<R(Args...)> func) : _func(func) {}
+  explicit(false) Callback(std::function<R(Args...)> func) : _func(func) {}
+
+  // Lambda support
+  template <typename F>
+      requires std::is_invocable_r_v<R, F, Args...> &&
+      (!std::is_same_v<std::decay_t<F>, Callback<R(Args...)>>) &&
+      (!std::is_function_v<std::remove_pointer_t<std::decay_t<F>>>)explicit(
+          false) Callback(F&& lambda)
+      : _func(std::forward<F>(lambda)) {}
 
   R operator()(Args... args) { return _func(args...); }
 
+  // NOLINTNEXTLINE
   operator bool() const { return _func != nullptr; }
 
  private:
@@ -45,3 +55,4 @@ class Callback<R(Args...)> {
 };
 
 }  // namespace mbed
+}  // namespace

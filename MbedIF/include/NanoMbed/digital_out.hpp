@@ -4,6 +4,7 @@
 
 #include "pin_name.hpp"
 
+namespace {
 namespace mbed {
 class DigitalOut {
  public:
@@ -22,3 +23,4 @@ class DigitalOut {
 };
 
 }  // namespace mbed
+}  // namespace

@@ -81,6 +81,7 @@ int ReceiveErrorsImpl(void* interface);
 void ResetPeripheralsImpl(void* interface);
 void SetFilterImpl(void* interface, int filter_num, CANFilter filter);
 void DeactivateFilterImpl(void* interface, int filter_num, CANFilter filter);
+bool ReceiveRawImpl(void* interface, CANMessage& msg);
 
 template <CANConfig Config>
 class DynCAN {

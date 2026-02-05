@@ -6,7 +6,7 @@
 #include <NanoHW/spi.hpp>
 
 #include "pin_name.hpp"
-
+namespace {
 namespace mbed {
 
 class SPI {
@@ -74,3 +74,5 @@ class SPI {
 };
 
 }  // namespace mbed
+
+}  // namespace

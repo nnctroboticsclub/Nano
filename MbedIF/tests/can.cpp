@@ -1,13 +1,10 @@
 #include <gtest/gtest.h>
-#include <NanoMbed/can.hpp>
-
-using mbed::CAN;
-using mbed::CANMessage;
+#include <mbed.h>
 
 // CANの初期化と基本的な送信テスト
 TEST(CANTest, InitializeAndSendMessage) {
   // StubImplを使用してCANを初期化
-  CAN can(mbed::NC, mbed::NC);  // StubImplはダミーピンを受け付ける
+  CAN can(NC, NC);  // StubImplはダミーピンを受け付ける
 
   // テスト用のCANメッセージを作成
   uint8_t test_data[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
@@ -35,7 +32,7 @@ TEST(CANTest, CANMessageProperties) {
 
 // CANリセット機能のテスト
 TEST(CANTest, ResetPeripherals) {
-  CAN can(mbed::NC, mbed::NC);
+  CAN can(NC, NC);
 
   // リセットしても例外が発生しないことを確認
   can.reset();
@@ -44,7 +41,7 @@ TEST(CANTest, ResetPeripherals) {
 
 // CANエラーカウンタのテスト
 TEST(CANTest, ErrorCounters) {
-  CAN can(mbed::NC, mbed::NC);
+  CAN can(NC, NC);
 
   // StubImplではエラーカウンタは常に0を返す
   int rx_errors = can.rderror();
@@ -56,7 +53,7 @@ TEST(CANTest, ErrorCounters) {
 
 // CANメッセージの複数送信テスト
 TEST(CANTest, MultipleSendMessages) {
-  CAN can(mbed::NC, mbed::NC);
+  CAN can(NC, NC);
 
   // 複数のメッセージを送信
   for (uint32_t id = 0x100; id < 0x110; ++id) {
@@ -69,7 +66,7 @@ TEST(CANTest, MultipleSendMessages) {
 
 // CANメッセージの異なるデータサイズのテスト
 TEST(CANTest, DifferentDataSizes) {
-  CAN can(mbed::NC, mbed::NC);
+  CAN can(NC, NC);
 
   // 1バイト
   {
@@ -107,7 +104,7 @@ TEST(CANTest, MessageConversion) {
   uint8_t data[] = {0x10, 0x20, 0x30, 0x40};
   CANMessage mbed_msg(0x789, data, 4);
 
-  // mbed::CANMessage -> nano_hw::can::CANMessage
+  // CANMessage -> nano_hw::can::CANMessage
   nano_hw::can::CANMessage nano_msg =
       static_cast<nano_hw::can::CANMessage>(mbed_msg);
 
@@ -116,7 +113,7 @@ TEST(CANTest, MessageConversion) {
   EXPECT_EQ(nano_msg.data[0], 0x10);
   EXPECT_EQ(nano_msg.data[1], 0x20);
 
-  // nano_hw::can::CANMessage -> mbed::CANMessage
+  // nano_hw::can::CANMessage -> CANMessage
   CANMessage converted_back = CANMessage::from_nano_hw(nano_msg);
 
   EXPECT_EQ(converted_back.id, 0x789);
@@ -127,20 +124,20 @@ TEST(CANTest, MessageConversion) {
 
 // CANフィルタ設定のテスト
 TEST(CANTest, FilterConfiguration) {
-  CAN can(mbed::NC, mbed::NC);
+  CAN can(NC, NC);
 
-  mbed::CAN_FilterConfTypeDef filter_config;
+  CAN_FilterConfTypeDef filter_config;
   filter_config.FilterNumber = 0;
-  filter_config.FilterMode = mbed::CAN_FILTERMODE_IDMASK;
-  filter_config.FilterScale = mbed::CAN_FILTERSCALE_32BIT;
+  filter_config.FilterMode = CAN_FILTERMODE_IDMASK;
+  filter_config.FilterScale = CAN_FILTERSCALE_32BIT;
   filter_config.FilterIdHigh = 0x0001;
   filter_config.FilterIdLow = 0x0000;
   filter_config.FilterMaskIdHigh = 0xFFFF;
   filter_config.FilterMaskIdLow = 0x0000;
-  filter_config.FilterFIFOAssignment = mbed::CAN_FILTER_FIFO0;
+  filter_config.FilterFIFOAssignment = CAN_FILTER_FIFO0;
   filter_config.FilterActivation = ENABLE;
 
-  mbed::HAL_CAN_TypeDef hal_can;
+  HAL_CAN_TypeDef hal_can;
   hal_can.can = &can;
 
   // フィルタ設定の実行

@@ -27,3 +27,6 @@ target_link_libraries(Test_NanoHW_MbedIF_SPI PUBLIC Nano::NanoHW_MbedIF Nano::Na
 
 add_nano_test(Test_NanoHW_MbedIF_UART tests/uart.cpp)
 target_link_libraries(Test_NanoHW_MbedIF_UART PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)
+
+add_nano_test(Test_NanoHW_MbedIF_Thread tests/thread.cpp)
+target_link_libraries(Test_NanoHW_MbedIF_Thread PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)

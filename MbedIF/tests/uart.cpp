@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <NanoMbed/uart.hpp>
+#include <mbed.h>
 
 using mbed::UnbufferedSerial;
 
 TEST(UARTTest, WriteBuffer) {
-  UnbufferedSerial uart(mbed::NC, mbed::NC, 115200);
+  UnbufferedSerial uart(NC, NC, 115200);
 
   const char tx[] = "hello";
   const size_t written = uart.write(tx, sizeof(tx));
@@ -14,7 +14,7 @@ TEST(UARTTest, WriteBuffer) {
 }
 
 TEST(UARTTest, ReadBuffer) {
-  UnbufferedSerial uart(mbed::NC, mbed::NC, 115200);
+  UnbufferedSerial uart(NC, NC, 115200);
 
   char rx[4] = {};
   const size_t read = uart.read(rx, sizeof(rx));
@@ -27,7 +27,7 @@ TEST(UARTTest, ReadBuffer) {
 }
 
 TEST(UARTTest, BaudChange) {
-  UnbufferedSerial uart(mbed::NC, mbed::NC, 9600);
+  UnbufferedSerial uart(NC, NC, 9600);
   uart.baud(115200);
 
   SUCCEED();

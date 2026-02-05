@@ -1,11 +1,9 @@
 #include <gtest/gtest.h>
 
-#include <NanoMbed/spi.hpp>
-
-using mbed::SPI;
+#include <mbed.h>
 
 TEST(SPITest, WriteSingleByte) {
-  SPI spi(mbed::NC, mbed::NC, mbed::NC);
+  SPI spi(NC, NC, NC);
 
   const int value = 0x5A;
   const int result = spi.write(value);
@@ -14,7 +12,7 @@ TEST(SPITest, WriteSingleByte) {
 }
 
 TEST(SPITest, WriteBuffer) {
-  SPI spi(mbed::NC, mbed::NC, mbed::NC);
+  SPI spi(NC, NC, NC);
 
   const char tx[] = {0x01, 0x02, 0x03, 0x04};
   char rx[4] = {};
@@ -29,7 +27,7 @@ TEST(SPITest, WriteBuffer) {
 }
 
 TEST(SPITest, ConfigureFormatAndFrequency) {
-  SPI spi(mbed::NC, mbed::NC, mbed::NC);
+  SPI spi(NC, NC, NC);
 
   spi.frequency(2000000);
   spi.format(8, 0);

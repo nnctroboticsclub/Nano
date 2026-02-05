@@ -37,6 +37,8 @@ void StartImpl(void* interface);
 void StopImpl(void* interface);
 std::chrono::milliseconds ReadImpl(void* interface);
 
+// Implementation must be in header for inline
+
 template <TimerConfig Config>
 class DynTimer {
   struct Callbacks : public ICallbacks {
