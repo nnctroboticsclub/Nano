@@ -37,14 +37,14 @@ class Timer {
   void start() { dri_.Start(); }
   void stop() { dri_.Stop(); }
 
-  int read_ms() {
+  int read_ms() const {
     auto milliseconds = dri_.Read();
     return static_cast<int>(milliseconds.count());
   }
 
-  std::chrono::milliseconds read() { return dri_.Read(); }
+  std::chrono::milliseconds read() const { return dri_.Read(); }
 
-  std::chrono::microseconds elapsed_time() {
+  std::chrono::microseconds elapsed_time() const {
     return std::chrono::duration_cast<std::chrono::microseconds>(dri_.Read());
   }
 

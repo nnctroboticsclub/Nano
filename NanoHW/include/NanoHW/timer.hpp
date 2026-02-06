@@ -57,7 +57,7 @@ class DynTimer {
   void Reset() { ResetImpl(interface_); }
   void Start() { StartImpl(interface_); }
   void Stop() { StopImpl(interface_); }
-  std::chrono::milliseconds Read() { return ReadImpl(interface_); }
+  std::chrono::milliseconds Read() const { return ReadImpl(interface_); }
 
  private:
   static Callbacks callbacks;
