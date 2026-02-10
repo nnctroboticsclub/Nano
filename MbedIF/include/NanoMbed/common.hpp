@@ -5,6 +5,24 @@
 #include "Nano/no_mutex_lifo.hpp"
 
 namespace {
+namespace mbed::details {
+
+// R(Args...) --> (T::R)(Args...) Utility type
+template <typename T, typename Fn>
+struct ClassMethod_Impl {
+  using type = std::nullptr_t;
+};
+
+template <typename T, typename R, typename... Args>
+struct ClassMethod_Impl<T, R(Args...)> {
+  using type = R (T::*)(Args...);
+};
+
+template <typename T, typename Fn>
+using ClassMethod = typename ClassMethod_Impl<T, Fn>::type;
+
+}  // namespace mbed::details
+
 namespace mbed {
 template <typename T, size_t N>
 class CircularBuffer {
@@ -16,43 +34,34 @@ class CircularBuffer {
   void pop(T& value) { value = buffer.Pop(); }
 };
 
-template <typename T>
-class Callback {};
-
-// Callback<void()>(T* obj, void (T::*method)())
-// Callback<void()>(void (*func)())
-// Callback<void()>(std::function<void()> func)
-template <typename R, typename... Args>
-class Callback<R(Args...)> {
+template <typename Fn>
+class Callback : public std::function<Fn> {
  public:
-  Callback() : _func(nullptr) {}
+  using std::function<Fn>::function;
 
-  template <typename T>
-  Callback(T* obj, R (T::*method)(Args...))
-      : _func([obj, method](Args... args) { return (obj->*method)(args...); }) {
-
-  }
-
-  explicit(false) Callback(R (*func)(Args...)) : _func(func) {}
-
-  explicit(false) Callback(std::function<R(Args...)> func) : _func(func) {}
-
-  // Lambda support
-  template <typename F>
-      requires std::is_invocable_r_v<R, F, Args...> &&
-      (!std::is_same_v<std::decay_t<F>, Callback<R(Args...)>>) &&
-      (!std::is_function_v<std::remove_pointer_t<std::decay_t<F>>>)explicit(
-          false) Callback(F&& lambda)
-      : _func(std::forward<F>(lambda)) {}
-
-  R operator()(Args... args) { return _func(args...); }
-
-  // NOLINTNEXTLINE
-  operator bool() const { return _func != nullptr; }
-
- private:
-  std::function<R(Args...)> _func;
+  template <typename T, typename Method = mbed::details::ClassMethod<T, Fn>>
+  Callback(T* obj, Method method) : std::function<Fn>(std::bind(method, obj)) {}
 };
+
+template <typename T, typename R, typename... Args>
+Callback(T*, R (T::*)(Args...)) -> Callback<R(Args...)>;
+
+// callback(T* obj, void (T::*method)()) -> Callback
+// callback(R (*func)(Args...)) -> Callback
+template <typename T>
+auto callback(T* obj, void (T::*method)()) {
+  return Callback<void()>(obj, method);
+}
+
+template <typename R, typename... Args>
+auto callback(R (*func)(Args...)) {
+  return Callback<R(Args...)>(func);
+}
+
+template <typename F>
+auto callback(F&& lambda) {
+  return Callback(std::forward<F>(lambda));
+}
 
 }  // namespace mbed
 }  // namespace

@@ -95,6 +95,7 @@ class CAN {
   };
 
  public:
+  enum MbedCANMode : uint8_t { Normal, LocalTest };
   enum IrqType : uint8_t {
     RxIrq,
     TxIrq,
@@ -154,6 +155,19 @@ class CAN {
         break;
       case EpIrq:
         passive_error_callback = handler;
+        break;
+    }
+  }
+
+  void frequency(int baudrate) { dri_.ChangeBaudrate(baudrate); }
+
+  void mode(MbedCANMode mode) {
+    switch (mode) {
+      case MbedCANMode::Normal:
+        dri_.ChangeMode(nano_hw::can::CANMode::kNormal);
+        break;
+      case MbedCANMode::LocalTest:
+        dri_.ChangeMode(nano_hw::can::CANMode::kLoopback);
         break;
     }
   }

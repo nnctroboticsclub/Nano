@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include <NanoHW/timer.hpp>
+#include "common.hpp"
 
 namespace {
 namespace mbed {
@@ -15,7 +16,7 @@ struct TimerInstanceData {
   void HandleTick() const;
 
  private:
-  void (*tick_callback)() = nullptr;
+  Callback<void()> tick_callback = nullptr;
   friend class Timer;
 };
 
@@ -49,7 +50,7 @@ class Timer {
   }
 
   // Attach callback for tick interrupt
-  void attach(void (*func)()) { data_->tick_callback = func; }
+  void attach(mbed::Callback<void()> func) { data_->tick_callback = func; }
 
   TimerInstanceData* GetInstanceData() { return data_; }
 

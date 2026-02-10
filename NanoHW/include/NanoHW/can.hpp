@@ -3,9 +3,8 @@
 #include <concepts>
 #include <cstdint>
 
-#include <NanoHW/pin.hpp>
-#include <NanoHW/policies.hpp>
 #include "pin.hpp"
+#include "policies.hpp"
 
 namespace nano_hw::can {
 
@@ -14,6 +13,8 @@ struct CANMessage {
   uint8_t data[8] = {};  // NOLINT
   uint8_t len = 0;
 };
+
+enum class CANMode { kNormal, kLoopback };
 
 struct CANFilter {
   enum class Type {
@@ -59,6 +60,8 @@ concept CAN =
   {value.ReceiveErrors()}->std::same_as<int>;
 
   {value.ResetPeripherals()}->std::same_as<void>;
+  {value.ChangeMode(CANMode::kNormal)}->std::same_as<void>;
+  {value.ChangeBaudrate(frequency)}->std::same_as<void>;
 
   {value.SetFilter(filter_num, filter)}->std::same_as<void>;
   {value.DeactivateFilter(filter_num, filter)}->std::same_as<void>;
@@ -75,6 +78,8 @@ struct ICallbacks {
 void* AllocInterface(Pin transmit_pin, Pin receive_pin, int frequency,
                      ICallbacks* callbacks, void* callback_context);
 void FreeInterface(void* interface);
+void ChangeBaudrateImpl(void* interface, int frequency);
+void ChangeModeImpl(void* interface, CANMode mode);
 bool SendMessageImpl(void* interface, CANMessage msg);
 int TransmitErrorsImpl(void* interface);
 int ReceiveErrorsImpl(void* interface);
@@ -116,7 +121,13 @@ class DynCAN {
   bool SendMessage(CANMessage msg) { return SendMessageImpl(interface_, msg); }
   int TransmitErrors() { return TransmitErrorsImpl(interface_); }
   int ReceiveErrors() { return ReceiveErrorsImpl(interface_); }
+
   void ResetPeripherals() { ResetPeripheralsImpl(interface_); }
+  void ChangeMode(CANMode mode) { ChangeModeImpl(interface_, mode); }
+  void ChangeBaudrate(int frequency) {
+    ChangeBaudrateImpl(interface_, frequency);
+  }
+
   void SetFilter(int filter_num, CANFilter filter) {
     SetFilterImpl(interface_, filter_num, filter);
   }

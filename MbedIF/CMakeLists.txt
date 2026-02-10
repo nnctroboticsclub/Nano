@@ -30,3 +30,9 @@ target_link_libraries(Test_NanoHW_MbedIF_UART PUBLIC Nano::NanoHW_MbedIF Nano::N
 
 add_nano_test(Test_NanoHW_MbedIF_Thread tests/thread.cpp)
 target_link_libraries(Test_NanoHW_MbedIF_Thread PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)
+
+add_nano_test(Test_NanoHW_MbedIF_HighResTimer tests/high_res_timer.cpp)
+target_link_libraries(Test_NanoHW_MbedIF_HighResTimer PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)
+
+add_nano_test(Test_NanoHW_MbedIF_Timer tests/timer.cpp)
+target_link_libraries(Test_NanoHW_MbedIF_Timer PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)

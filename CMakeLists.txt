@@ -27,7 +27,6 @@ endfunction()
 
 add_subdirectory(MbedIF)
 add_subdirectory(StubImpl)
-add_subdirectory(MbedImpl)
 add_subdirectory(Nano)
 add_subdirectory(NanoHW)
 

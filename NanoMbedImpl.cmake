@@ -28,12 +28,12 @@ function(nano_hw_mbed_impl impl_target mbed_target)
     ${MBED_IMPL_SOURCE_DIR}/thread.cpp
     ${MBED_IMPL_SOURCE_DIR}/rtos.cpp
     ${MBED_IMPL_SOURCE_DIR}/timer.cpp
+    ${MBED_IMPL_SOURCE_DIR}/high_res_clock.cpp
   )
 
   # Link required libraries
   target_link_libraries(${impl_target} PRIVATE Nano::NanoHW)
   target_link_libraries(${impl_target} PUBLIC ${mbed_target})
-
   target_compile_features(${impl_target} PUBLIC cxx_std_20)
 
   # Add alias for consistent naming

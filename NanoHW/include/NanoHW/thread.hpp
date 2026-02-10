@@ -3,6 +3,7 @@
 #include <concepts>
 #include <cstdint>
 #include <functional>
+#include <string>
 
 enum ThreadPriority {
   ThreadPriorityIdle = -3,         ///< Priority: idle (lowest)

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <mbed.h>
+#include "can_api.h"
 
 // CANの初期化と基本的な送信テスト
 TEST(CANTest, InitializeAndSendMessage) {
@@ -177,4 +178,25 @@ TEST(CANTest, DataFieldAccess) {
   EXPECT_EQ(msg.data[0], 0xAA);
   EXPECT_EQ(msg.data[1], 0xBB);
   EXPECT_EQ(msg.data[2], 0xCC);
+}
+
+// CANメッセージ受信割り込みのattachテスト
+TEST(CANTest, RxIrqAttach) {
+  CAN can(NC, NC);
+
+  struct Receiver {
+    // 受信割り込みハンドラのフラグ
+    bool rx_handler_called = false;
+
+    void OnReceive() { rx_handler_called = true; }
+  };
+
+  Receiver r;
+
+  // 受信割り込みにコールバックを登録
+  can.attach(callback(&r, &Receiver::OnReceive), CAN::TxIrq);
+
+  can.write((CANMessage){});
+
+  EXPECT_TRUE(r.rx_handler_called);
 }
