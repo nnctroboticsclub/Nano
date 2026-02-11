@@ -1,5 +1,6 @@
 add_library(NanoHW_StubImpl STATIC
   source/digital_out.cpp
+  source/pwm.cpp
   source/can.cpp
   source/spi.cpp
   source/uart.cpp

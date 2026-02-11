@@ -10,10 +10,10 @@ class MbedCAN {
  public:
   MbedCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency,
           ICallbacks* callbacks, void* callback_context)
-      : can_(static_cast<PinName>(receive_pin.number),
-             static_cast<PinName>(transmit_pin.number)),
-        callbacks_(callbacks),
-        callback_context_(callback_context) {
+      : callbacks_(callbacks),
+        callback_context_(callback_context),
+        can_(static_cast<PinName>(receive_pin.number),
+             static_cast<PinName>(transmit_pin.number)) {
     can_.frequency(frequency);
 
     // Attach RX interrupt handler

@@ -36,3 +36,6 @@ target_link_libraries(Test_NanoHW_MbedIF_HighResTimer PUBLIC Nano::NanoHW_MbedIF
 
 add_nano_test(Test_NanoHW_MbedIF_Timer tests/timer.cpp)
 target_link_libraries(Test_NanoHW_MbedIF_Timer PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)
+
+add_nano_test(Test_NanoHW_MbedIF_PWM tests/pwm.cpp)
+target_link_libraries(Test_NanoHW_MbedIF_PWM PUBLIC Nano::NanoHW_MbedIF Nano::NanoHW_StubImpl)

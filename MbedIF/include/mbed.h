@@ -9,6 +9,7 @@
 #include <NanoMbed/can.hpp>
 #include <NanoMbed/digital_out.hpp>
 #include <NanoMbed/high_res_clock.hpp>
+#include <NanoMbed/pwm.hpp>
 #include <NanoMbed/spi.hpp>
 #include <NanoMbed/thread.hpp>
 #include <NanoMbed/timer.hpp>

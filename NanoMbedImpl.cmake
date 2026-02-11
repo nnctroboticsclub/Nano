@@ -28,6 +28,7 @@ function(nano_hw_mbed_impl impl_target mbed_target)
     ${MBED_IMPL_SOURCE_DIR}/thread.cpp
     ${MBED_IMPL_SOURCE_DIR}/rtos.cpp
     ${MBED_IMPL_SOURCE_DIR}/timer.cpp
+    ${MBED_IMPL_SOURCE_DIR}/pwm.cpp
     ${MBED_IMPL_SOURCE_DIR}/high_res_clock.cpp
   )
 
