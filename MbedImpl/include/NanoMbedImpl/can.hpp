@@ -5,7 +5,6 @@
 
 namespace nano_mbed {
 using nano_hw::can::CANFilter;
-using nano_hw::can::ICallbacks;
 using HWCANMessage = nano_hw::can::CANMessage;
 using MbedCANMessage = mbed::CANMessage;
 
@@ -27,7 +26,7 @@ static auto GetCANAPI(mbed::CAN& can) -> can_t* {
 class MbedCAN {
  public:
   MbedCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency,
-          ICallbacks* callbacks, void* callback_context)
+          nano_hw::can::ICallbacks* callbacks, void* callback_context)
       : callbacks_(callbacks),
         callback_context_(callback_context),
         can_(static_cast<PinName>(receive_pin.number),
@@ -115,7 +114,7 @@ class MbedCAN {
     }
   }
 
-  ICallbacks* callbacks_;
+  nano_hw::can::ICallbacks* callbacks_;
   void* callback_context_;
 
  public:

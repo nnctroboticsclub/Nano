@@ -6,12 +6,10 @@
 #include <cstddef>
 
 namespace nano_mbed {
-using nano_hw::uart::ICallbacks;
-
 class MbedUART {
  public:
   MbedUART(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency,
-           ICallbacks* callbacks, void* callback_context)
+           nano_hw::uart::ICallbacks* callbacks, void* callback_context)
       : serial_(static_cast<PinName>(transmit_pin.number),
                 static_cast<PinName>(receive_pin.number), frequency),
         callbacks_(callbacks),
@@ -39,7 +37,7 @@ class MbedUART {
 
  private:
   mbed::UnbufferedSerial serial_;
-  ICallbacks* callbacks_;
+  nano_hw::uart::ICallbacks* callbacks_;
   void* callback_context_;
 };
 }  // namespace nano_mbed

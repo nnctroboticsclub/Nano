@@ -5,7 +5,6 @@
 #include <vector>
 
 namespace nano_mbed {
-using nano_hw::spi::ICallbacks;
 using nano_hw::spi::SPIFormat;
 
 namespace {
@@ -27,7 +26,8 @@ int ToMbedMode(SPIFormat format) {
 class MbedSPI {
  public:
   MbedSPI(nano_hw::Pin miso, nano_hw::Pin mosi, nano_hw::Pin sclk,
-          int frequency, ICallbacks* callbacks, void* callback_context)
+          int frequency, nano_hw::spi::ICallbacks* callbacks,
+          void* callback_context)
       : spi_(static_cast<PinName>(mosi.number),
              static_cast<PinName>(miso.number),
              static_cast<PinName>(sclk.number)),
@@ -55,7 +55,7 @@ class MbedSPI {
 
  private:
   mbed::SPI spi_;
-  ICallbacks* callbacks_;
+  nano_hw::spi::ICallbacks* callbacks_;
   void* callback_context_;
 };
 }  // namespace nano_mbed

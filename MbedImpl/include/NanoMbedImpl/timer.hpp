@@ -3,11 +3,9 @@
 #include <NanoHW/timer_impl.hpp>
 
 namespace nano_mbed {
-using nano_hw::timer::ICallbacks;
-
 class MbedTimer {
  public:
-  MbedTimer(ICallbacks* callbacks, void* callback_context) {
+  MbedTimer(nano_hw::timer::ICallbacks* callbacks, void* callback_context) {
     (void)callbacks;         // Unused
     (void)callback_context;  // Unused
   }
@@ -25,7 +23,7 @@ class MbedTimer {
 
  private:
   mbed::Timer timer_;
-  // ICallbacks* callbacks_;  // Unused - timer doesn't have callbacks yet
+  // nano_hw::timer::ICallbacks* callbacks_;  // Unused - timer doesn't have callbacks yet
   // void* callback_context_;  // Unused
 };
 }  // namespace nano_mbed

@@ -1,7 +1,7 @@
-if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/../../MbedImpl/source")
-  set(MBED_IMPL_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../MbedImpl/source")
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/../../MbedImpl/include")
+  set(MBED_IMPL_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../MbedImpl/include")
 else()
-  set(MBED_IMPL_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/MbedImpl/source")
+  set(MBED_IMPL_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/MbedImpl/include")
 endif()
 
 # Function to create a Mbed implementation target linked to a specific mbed library
@@ -20,22 +20,13 @@ function(nano_hw_mbed_impl impl_target mbed_target)
   # Determine source directory (build tree vs install tree)
 
   # Create the implementation library with MbedImpl sources
-  add_library(${impl_target} OBJECT
-    ${MBED_IMPL_SOURCE_DIR}/digital_out.cpp
-    ${MBED_IMPL_SOURCE_DIR}/can.cpp
-    ${MBED_IMPL_SOURCE_DIR}/spi.cpp
-    ${MBED_IMPL_SOURCE_DIR}/uart.cpp
-    ${MBED_IMPL_SOURCE_DIR}/thread.cpp
-    ${MBED_IMPL_SOURCE_DIR}/rtos.cpp
-    ${MBED_IMPL_SOURCE_DIR}/timer.cpp
-    ${MBED_IMPL_SOURCE_DIR}/pwm.cpp
-    ${MBED_IMPL_SOURCE_DIR}/high_res_clock.cpp
-  )
+  add_library(${impl_target} INTERFACE)
 
   # Link required libraries
-  target_link_libraries(${impl_target} PRIVATE Nano::NanoHW)
-  target_link_libraries(${impl_target} PUBLIC ${mbed_target})
-  target_compile_features(${impl_target} PUBLIC cxx_std_20)
+  target_link_libraries(${impl_target} INTERFACE Nano::NanoHW)
+  target_link_libraries(${impl_target} INTERFACE ${mbed_target})
+  target_include_directories(${impl_target} INTERFACE ${MBED_IMPL_SOURCE_DIR})
+  target_compile_features(${impl_target} INTERFACE cxx_std_20)
 
   # Add alias for consistent naming
   add_library(Nano::${impl_target} ALIAS ${impl_target})

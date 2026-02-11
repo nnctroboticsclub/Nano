@@ -46,8 +46,8 @@ install(FILES
 
 # Install MbedImpl sources
 install(DIRECTORY
-  ${CMAKE_CURRENT_SOURCE_DIR}/MbedImpl/source/
-  DESTINATION lib/cmake/Nano/MbedImpl/source
+  ${CMAKE_CURRENT_SOURCE_DIR}/MbedImpl/include/
+  DESTINATION lib/cmake/Nano/MbedImpl/include
   FILES_MATCHING PATTERN "*.cpp" PATTERN "*.h" PATTERN "*.hpp"
 )
 
