@@ -1,8 +1,11 @@
-#include <mbed.h>
-#include <NanoHW/thread_impl.hpp>
+#pragma once
 
 #include <functional>
 
+#include <mbed.h>
+#include <NanoHW/thread_impl.hpp>
+
+namespace nano_mbed {
 using ::ThreadPriority;
 
 // Map NanoHW ThreadPriority to Mbed osPriority
@@ -99,6 +102,4 @@ class MbedThread {
   rtos::Thread* thread_;
   bool terminated_;
 };
-
-// ThreadImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::thread::ThreadImpl<MbedThread>;
+}  // namespace nano_mbed

@@ -1,7 +1,10 @@
+#pragma once
+
 #include <mbed.h>
 
 #include <NanoHW/high_res_clock_impl.hpp>
 
+namespace nano_mbed {
 class MbedHighResClock {
  public:
   static std::chrono::milliseconds Now() {
@@ -9,5 +12,4 @@ class MbedHighResClock {
     return std::chrono::duration_cast<std::chrono::milliseconds>(d);
   }
 };
-
-template struct nano_hw::HighResClockImpl<MbedHighResClock>;
+}  // namespace nano_mbed

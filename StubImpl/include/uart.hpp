@@ -1,3 +1,5 @@
+#pragma once
+
 #include <NanoHW/pin.hpp>
 #include <NanoHW/uart_impl.hpp>
 
@@ -6,6 +8,7 @@
 #include <cstring>
 #include <iostream>
 
+namespace nano_stub {
 using nano_hw::uart::ICallbacks;
 
 class MockUART {
@@ -52,6 +55,4 @@ class MockUART {
   ICallbacks* callbacks_;
   void* callback_context_;
 };
-
-// UARTImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::uart::UARTImpl<MockUART>;
+}  // namespace nano_stub

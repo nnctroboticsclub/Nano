@@ -1,6 +1,8 @@
+#pragma once
 #include <mbed.h>
 #include <NanoHW/digital_out_impl.hpp>
 
+namespace nano_mbed {
 class MbedDigitalOut {
  public:
   explicit MbedDigitalOut(nano_hw::Pin pin)
@@ -16,6 +18,4 @@ class MbedDigitalOut {
  private:
   mbed::DigitalOut digital_out_;
 };
-
-// DigitalOutImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::DigitalOutImpl<MbedDigitalOut>;
+}  // namespace nano_mbed

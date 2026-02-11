@@ -1,8 +1,11 @@
+#pragma once
+
 #include <NanoHW/thread_impl.hpp>
 
 #include <functional>
 #include <iostream>
 
+namespace nano_stub {
 using ::ThreadPriority;
 
 class MockThread {
@@ -58,6 +61,4 @@ class MockThread {
   bool started_;
   bool terminated_;
 };
-
-// ThreadImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::thread::ThreadImpl<MockThread>;
+}  // namespace nano_stub

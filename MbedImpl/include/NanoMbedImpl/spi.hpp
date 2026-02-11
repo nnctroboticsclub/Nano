@@ -1,8 +1,10 @@
+#pragma once
 #include <mbed.h>
 #include <NanoHW/spi_impl.hpp>
 
 #include <vector>
 
+namespace nano_mbed {
 using nano_hw::spi::ICallbacks;
 using nano_hw::spi::SPIFormat;
 
@@ -56,6 +58,4 @@ class MbedSPI {
   ICallbacks* callbacks_;
   void* callback_context_;
 };
-
-// SPIImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::spi::SPIImpl<MbedSPI>;
+}  // namespace nano_mbed

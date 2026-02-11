@@ -1,3 +1,4 @@
+#pragma once
 #include <mbed.h>
 #include <NanoHW/parallel.hpp>
 

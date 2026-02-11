@@ -1,16 +1,9 @@
-add_library(NanoHW_StubImpl STATIC
-  source/digital_out.cpp
-  source/pwm.cpp
-  source/can.cpp
-  source/spi.cpp
-  source/uart.cpp
-  source/thread.cpp
-  source/rtos.cpp
-  source/timer.cpp
-  source/system.cpp
-  source/high_res_clock.cpp
-)
+add_library(NanoHW_StubImpl INTERFACE)
 add_library(Nano::NanoHW_StubImpl ALIAS NanoHW_StubImpl)
-target_link_libraries(NanoHW_StubImpl PUBLIC Nano::NanoHW)
+target_include_directories(NanoHW_StubImpl INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/Nano>
+)
+target_link_libraries(NanoHW_StubImpl INTERFACE Nano::NanoHW)
 
 install(TARGETS NanoHW_StubImpl EXPORT NanoTargets)

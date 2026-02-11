@@ -1,6 +1,10 @@
+#include "spi.hpp"
 #include <gtest/gtest.h>
 
 #include <mbed.h>
+#include "NanoHW/spi_impl.hpp"
+
+template struct nano_hw::spi::SPIImpl<nano_stub::MockSPI>;
 
 TEST(SPITest, WriteSingleByte) {
   SPI spi(NC, NC, NC);

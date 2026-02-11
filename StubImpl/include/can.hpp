@@ -1,9 +1,11 @@
+#pragma once
 #include "NanoHW/can_impl.hpp"
 
 #include <iostream>
 
 #include "NanoHW/pin.hpp"
 
+namespace nano_stub {
 using namespace nano_hw::can;
 
 class MockCAN {
@@ -89,6 +91,4 @@ class MockCAN {
   ICallbacks* callbacks_;
   void* callback_context_;
 };
-
-// CANImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::can::CANImpl<MockCAN>;
+}  // namespace nano_stub

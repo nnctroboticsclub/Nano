@@ -1,8 +1,11 @@
+#include "thread.hpp"
 #include <gtest/gtest.h>
 
 #include <NanoMbed/thread.hpp>
+#include "NanoHW/thread_impl.hpp"
 
 using rtos::Thread;
+template struct nano_hw::thread::ThreadImpl<nano_stub::MockThread>;
 
 TEST(ThreadTest, CreateThread) {
   Thread thread;

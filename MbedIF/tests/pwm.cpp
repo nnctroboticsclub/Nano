@@ -1,6 +1,10 @@
+#include "pwm.hpp"
 #include <gtest/gtest.h>
 
 #include <NanoMbed/pwm.hpp>
+#include "NanoHW/pwm_impl.hpp"
+
+template struct nano_hw::PwmOutImpl<nano_stub::MockPwmOut>;
 
 // PWM の基本的な初期化テスト
 TEST(PwmOutTest, Initialize) {

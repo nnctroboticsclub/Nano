@@ -1,6 +1,10 @@
+#include "can.hpp"
 #include <gtest/gtest.h>
 #include <mbed.h>
+#include "NanoHW/can_impl.hpp"
 #include "can_api.h"
+
+template struct nano_hw::can::CANImpl<nano_stub::MockCAN>;
 
 // CANの初期化と基本的な送信テスト
 TEST(CANTest, InitializeAndSendMessage) {

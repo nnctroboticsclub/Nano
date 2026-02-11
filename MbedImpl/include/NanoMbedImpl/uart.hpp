@@ -1,8 +1,11 @@
+#pragma once
+
 #include <mbed.h>
 #include <NanoHW/uart_impl.hpp>
 
 #include <cstddef>
 
+namespace nano_mbed {
 using nano_hw::uart::ICallbacks;
 
 class MbedUART {
@@ -39,6 +42,4 @@ class MbedUART {
   ICallbacks* callbacks_;
   void* callback_context_;
 };
-
-// UARTImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::uart::UARTImpl<MbedUART>;
+}  // namespace nano_mbed

@@ -1,8 +1,10 @@
+#pragma once
 #include "NanoHW/digital_out_impl.hpp"
 #include "NanoHW/pin.hpp"
 
 #include <iostream>
 
+namespace nano_stub {
 class MockDigitalOut {
  public:
   explicit MockDigitalOut(nano_hw::Pin pin) : pin_(pin) {}
@@ -20,6 +22,4 @@ class MockDigitalOut {
  private:
   nano_hw::Pin pin_;
 };
-
-// DigitalOutImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::DigitalOutImpl<MockDigitalOut>;
+}  // namespace nano_stub

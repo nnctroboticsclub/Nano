@@ -1,11 +1,14 @@
 #include <gtest/gtest.h>
 
-#include <chrono>
 #include <thread>
 
 #include <NanoMbed/high_res_clock.hpp>
+#include "NanoHW/high_res_clock_impl.hpp"
+#include "high_res_clock.hpp"
 
 using namespace std::chrono_literals;
+
+template struct nano_hw::HighResClockImpl<nano_stub::StubHighResClock>;
 
 // HighResClock の基本的なテスト
 TEST(HighResClockTest, TimeProgresses) {

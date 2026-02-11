@@ -1,6 +1,9 @@
+#pragma once
+
 #include <mbed.h>
 #include <NanoHW/can_impl.hpp>
 
+namespace nano_mbed {
 using nano_hw::can::CANFilter;
 using nano_hw::can::ICallbacks;
 using HWCANMessage = nano_hw::can::CANMessage;
@@ -118,6 +121,4 @@ class MbedCAN {
  public:
   mbed::CAN can_;
 };
-
-// CANImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::can::CANImpl<MbedCAN>;
+}  // namespace nano_mbed

@@ -1,3 +1,4 @@
+#pragma once
 #include "NanoHW/timer_impl.hpp"
 
 #include <chrono>
@@ -5,6 +6,7 @@
 
 using nano_hw::timer::ICallbacks;
 
+namespace nano_stub {
 class MockTimer {
  public:
   MockTimer(ICallbacks* callbacks, void* callback_context)
@@ -64,6 +66,4 @@ class MockTimer {
   bool is_running_ = false;
   std::chrono::milliseconds accumulated_time_;
 };
-
-// TimerImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::timer::TimerImpl<MockTimer>;
+}  // namespace nano_stub

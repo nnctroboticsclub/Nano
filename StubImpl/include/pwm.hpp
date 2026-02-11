@@ -1,8 +1,11 @@
+#pragma once
+
 #include "NanoHW/pin.hpp"
 #include "NanoHW/pwm_impl.hpp"
 
 #include <iostream>
 
+namespace nano_stub {
 class MockPwmOut {
  public:
   explicit MockPwmOut(nano_hw::Pin pin)
@@ -30,6 +33,4 @@ class MockPwmOut {
   float duty_cycle_;
   int period_us_;
 };
-
-// PwmOutImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::PwmOutImpl<MockPwmOut>;
+}  // namespace nano_stub

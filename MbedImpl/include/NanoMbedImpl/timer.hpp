@@ -1,6 +1,8 @@
+#pragma once
 #include <mbed.h>
 #include <NanoHW/timer_impl.hpp>
 
+namespace nano_mbed {
 using nano_hw::timer::ICallbacks;
 
 class MbedTimer {
@@ -26,6 +28,4 @@ class MbedTimer {
   // ICallbacks* callbacks_;  // Unused - timer doesn't have callbacks yet
   // void* callback_context_;  // Unused
 };
-
-// TimerImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::timer::TimerImpl<MbedTimer>;
+}  // namespace nano_mbed

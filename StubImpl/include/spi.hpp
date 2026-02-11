@@ -1,9 +1,11 @@
+#pragma once
 #include <NanoHW/pin.hpp>
 #include <NanoHW/spi_impl.hpp>
 
 #include <iostream>
 #include <vector>
 
+namespace nano_stub {
 using nano_hw::spi::ICallbacks;
 using nano_hw::spi::SPIFormat;
 
@@ -73,6 +75,4 @@ class MockSPI {
   ICallbacks* callbacks_;
   void* callback_context_;
 };
-
-// SPIImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::spi::SPIImpl<MockSPI>;
+}  // namespace nano_stub

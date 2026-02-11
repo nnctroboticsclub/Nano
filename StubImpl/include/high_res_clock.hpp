@@ -1,7 +1,10 @@
+#pragma once
+
 #include <NanoHW/high_res_clock.hpp>
 #include <chrono>
 #include "NanoHW/high_res_clock_impl.hpp"
 
+namespace nano_stub {
 class StubHighResClock {
  public:
   static std::chrono::milliseconds Now() {
@@ -9,5 +12,4 @@ class StubHighResClock {
     return std::chrono::duration_cast<std::chrono::milliseconds>(time);
   }
 };
-
-template struct nano_hw::HighResClockImpl<StubHighResClock>;
+}  // namespace nano_stub

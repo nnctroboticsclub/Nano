@@ -1,8 +1,12 @@
+#include "uart.hpp"
 #include <gtest/gtest.h>
 
 #include <mbed.h>
+#include "NanoHW/uart_impl.hpp"
 
 using mbed::UnbufferedSerial;
+
+template struct nano_hw::uart::UARTImpl<nano_stub::MockUART>;
 
 TEST(UARTTest, WriteBuffer) {
   UnbufferedSerial uart(NC, NC, 115200);

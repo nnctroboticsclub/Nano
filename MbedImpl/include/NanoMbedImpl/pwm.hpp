@@ -1,6 +1,9 @@
+#pragma once
+
 #include <mbed.h>
 #include <NanoHW/pwm_impl.hpp>
 
+namespace nano_mbed {
 class MbedPwmOut {
  public:
   explicit MbedPwmOut(nano_hw::Pin pin)
@@ -18,6 +21,4 @@ class MbedPwmOut {
  private:
   mbed::PwmOut pwm_out_;
 };
-
-// PwmOutImpl をインスタンス化して Friend-Injection を有効化
-template class nano_hw::PwmOutImpl<MbedPwmOut>;
+}  // namespace nano_mbed

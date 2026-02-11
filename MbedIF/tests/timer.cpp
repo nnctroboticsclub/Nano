@@ -1,11 +1,14 @@
+#include "timer.hpp"
 #include <gtest/gtest.h>
 
 #include <chrono>
 #include <thread>
 
 #include <NanoMbed/timer.hpp>
+#include "NanoHW/timer_impl.hpp"
 
 using namespace std::chrono_literals;
+template struct nano_hw::timer::TimerImpl<nano_stub::MockTimer>;
 
 // Timer の基本的な初期化テスト
 TEST(HighResTimerTest, Initialize) {

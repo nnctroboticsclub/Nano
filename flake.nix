@@ -15,7 +15,7 @@
     {
       packages.x86_64-linux.default = rpkgs.rlib.buildCMakeProject {
         pname = "nano";
-        version = "v0.3.0";
+        version = "v0.3.1";
         src = ./.;
 
         cmakeBuildInputs = [
