@@ -8,13 +8,13 @@ concept SleepManager = requires() {
   T::UnlockSleep();
 };
 
-void LockSleepImpl();
-void UnlockSleepImpl();
+void LockSleep();
+void UnlockSleep();
 
 class DynSleepManager {
  public:
-  static void LockSleep() { LockSleepImpl(); }
-  static void UnlockSleep() { UnlockSleepImpl(); }
+  static void LockSleep() { nano_hw::LockSleep(); }
+  static void UnlockSleep() { nano_hw::UnlockSleep(); }
 };
 
 static_assert(SleepManager<DynSleepManager>);

@@ -1,5 +1,5 @@
 #include <mbed.h>
-#include <NanoHW/digital_out.hpp>
+#include <NanoHW/digital_out_impl.hpp>
 
 class MbedDigitalOut {
  public:
@@ -17,18 +17,5 @@ class MbedDigitalOut {
   mbed::DigitalOut digital_out_;
 };
 
-void* nano_hw::DynDigitalOut::AllocInstance(Pin pin) {
-  return new MbedDigitalOut(pin);
-}
-
-void nano_hw::DynDigitalOut::FreeInstance(void* instance) {
-  delete static_cast<MbedDigitalOut*>(instance);
-}
-
-void nano_hw::DynDigitalOut::Write(bool state) {
-  static_cast<MbedDigitalOut*>(instance_)->Write(state);
-}
-
-bool nano_hw::DynDigitalOut::Read() {
-  return static_cast<MbedDigitalOut*>(instance_)->Read();
-}
+// DigitalOutImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::DigitalOutImpl<MbedDigitalOut>;

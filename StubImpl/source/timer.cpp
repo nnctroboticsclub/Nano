@@ -1,4 +1,4 @@
-#include "NanoHW/timer.hpp"
+#include "NanoHW/timer_impl.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -65,27 +65,5 @@ class MockTimer {
   std::chrono::milliseconds accumulated_time_;
 };
 
-void* nano_hw::timer::AllocInterface(ICallbacks* callbacks,
-                                     void* callback_context) {
-  return new MockTimer(callbacks, callback_context);
-}
-
-void nano_hw::timer::FreeInterface(void* interface) {
-  delete static_cast<MockTimer*>(interface);
-}
-
-void nano_hw::timer::ResetImpl(void* interface) {
-  static_cast<MockTimer*>(interface)->Reset();
-}
-
-void nano_hw::timer::StartImpl(void* interface) {
-  static_cast<MockTimer*>(interface)->Start();
-}
-
-void nano_hw::timer::StopImpl(void* interface) {
-  static_cast<MockTimer*>(interface)->Stop();
-}
-
-std::chrono::milliseconds nano_hw::timer::ReadImpl(void* interface) {
-  return static_cast<MockTimer*>(interface)->Read();
-}
+// TimerImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::timer::TimerImpl<MockTimer>;

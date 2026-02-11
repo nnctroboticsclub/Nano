@@ -1,4 +1,4 @@
-#include "NanoHW/can.hpp"
+#include "NanoHW/can_impl.hpp"
 
 #include <iostream>
 
@@ -49,6 +49,23 @@ class MockCAN {
 
   void ResetPeripherals() { std::cout << "CAN ResetPeripherals called\n"; }
 
+  void ChangeBaudrate(int frequency) {
+    frequency_ = frequency;
+    std::cout << "CAN ChangeBaudrate: " << frequency << "\n";
+  }
+
+  void ChangeMode(nano_hw::can::CANMode mode) {
+    std::cout << "CAN ChangeMode: "
+              << (mode == nano_hw::can::CANMode::kNormal ? "Normal"
+                                                         : "Loopback")
+              << "\n";
+  }
+
+  bool ReceiveRaw(CANMessage& msg) {
+    std::cout << "CAN ReceiveRaw called\n";
+    return false;  // Mock always returns false
+  }
+
   void SetFilter(int filter_num, CANFilter filter) {
     std::cout << "CAN SetFilter: filter_num " << filter_num << ", type ";
     if (filter.filter_type == CANFilter::Type::kMask) {
@@ -73,39 +90,5 @@ class MockCAN {
   void* callback_context_;
 };
 
-void* nano_hw::can::AllocInterface(Pin transmit_pin, Pin receive_pin,
-                                   int frequency, ICallbacks* callbacks,
-                                   void* callback_context) {
-  return new MockCAN(transmit_pin, receive_pin, frequency, callbacks,
-                     callback_context);
-}
-
-void nano_hw::can::FreeInterface(void* interface) {
-  delete static_cast<MockCAN*>(interface);
-}
-
-bool nano_hw::can::SendMessageImpl(void* interface, CANMessage msg) {
-  return static_cast<MockCAN*>(interface)->SendMessage(msg);
-}
-
-int nano_hw::can::TransmitErrorsImpl(void* interface) {
-  return static_cast<MockCAN*>(interface)->TransmitErrors();
-}
-
-int nano_hw::can::ReceiveErrorsImpl(void* interface) {
-  return static_cast<MockCAN*>(interface)->ReceiveErrors();
-}
-
-void nano_hw::can::ResetPeripheralsImpl(void* interface) {
-  static_cast<MockCAN*>(interface)->ResetPeripherals();
-}
-
-void nano_hw::can::SetFilterImpl(void* interface, int filter_num,
-                                 CANFilter filter) {
-  static_cast<MockCAN*>(interface)->SetFilter(filter_num, filter);
-}
-
-void nano_hw::can::DeactivateFilterImpl(void* interface, int filter_num,
-                                        CANFilter filter) {
-  static_cast<MockCAN*>(interface)->DeactivateFilter(filter_num, filter);
-}
+// CANImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::can::CANImpl<MockCAN>;

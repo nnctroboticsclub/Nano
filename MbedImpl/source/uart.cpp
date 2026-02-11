@@ -1,5 +1,5 @@
 #include <mbed.h>
-#include <NanoHW/uart.hpp>
+#include <NanoHW/uart_impl.hpp>
 
 #include <cstddef>
 
@@ -40,26 +40,5 @@ class MbedUART {
   void* callback_context_;
 };
 
-void* nano_hw::uart::AllocInterface(nano_hw::Pin transmit_pin,
-                                    nano_hw::Pin receive_pin, int frequency,
-                                    ICallbacks* callbacks,
-                                    void* callback_context) {
-  return new MbedUART(transmit_pin, receive_pin, frequency, callbacks,
-                      callback_context);
-}
-
-void nano_hw::uart::FreeInterface(void* interface) {
-  delete static_cast<MbedUART*>(interface);
-}
-
-void nano_hw::uart::RebaudImpl(void* interface, int frequency) {
-  static_cast<MbedUART*>(interface)->Rebaud(frequency);
-}
-
-size_t nano_hw::uart::SendImpl(void* interface, void* buffer, size_t size) {
-  return static_cast<MbedUART*>(interface)->Send(buffer, size);
-}
-
-size_t nano_hw::uart::ReceiveImpl(void* interface, void* buffer, size_t size) {
-  return static_cast<MbedUART*>(interface)->Receive(buffer, size);
-}
+// UARTImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::uart::UARTImpl<MbedUART>;

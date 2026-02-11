@@ -10,7 +10,7 @@
 namespace {
 namespace mbed {
 
-class HighResClock : public nano_hw::HighResClock {
+class HighResClock : public nano_hw::HighResClock<nano_hw::DynHighResClock> {
   static void lock() { nano_hw::DynSleepManager::LockSleep(); }
   static void unlock() { nano_hw::DynSleepManager::UnlockSleep(); }
 };

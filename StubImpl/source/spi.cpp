@@ -1,5 +1,5 @@
 #include <NanoHW/pin.hpp>
-#include <NanoHW/spi.hpp>
+#include <NanoHW/spi_impl.hpp>
 
 #include <iostream>
 #include <vector>
@@ -74,27 +74,5 @@ class MockSPI {
   void* callback_context_;
 };
 
-void* nano_hw::spi::AllocInterface(nano_hw::Pin miso, nano_hw::Pin mosi,
-                                   nano_hw::Pin sclk, int frequency,
-                                   ICallbacks* callbacks,
-                                   void* callback_context) {
-  return new MockSPI(miso, mosi, sclk, frequency, callbacks, callback_context);
-}
-
-void nano_hw::spi::FreeInterface(void* interface) {
-  delete static_cast<MockSPI*>(interface);
-}
-
-void nano_hw::spi::SetModeImpl(void* interface, SPIFormat format) {
-  static_cast<MockSPI*>(interface)->SetMode(format);
-}
-
-void nano_hw::spi::SetFrequencyImpl(void* interface, int frequency) {
-  static_cast<MockSPI*>(interface)->SetFrequency(frequency);
-}
-
-int nano_hw::spi::TransferImpl(void* interface,
-                               std::vector<uint8_t> const& tx_buffer,
-                               std::vector<uint8_t>& rx_buffer) {
-  return static_cast<MockSPI*>(interface)->Transfer(tx_buffer, rx_buffer);
-}
+// SPIImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::spi::SPIImpl<MockSPI>;

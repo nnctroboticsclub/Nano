@@ -1,10 +1,25 @@
 #include <mbed.h>
-#include <NanoHW/can.hpp>
+#include <NanoHW/can_impl.hpp>
 
 using nano_hw::can::CANFilter;
 using nano_hw::can::ICallbacks;
 using HWCANMessage = nano_hw::can::CANMessage;
 using MbedCANMessage = mbed::CANMessage;
+
+namespace {
+class CANHack_t : private mbed::CAN {
+ public:
+  static std::size_t kOffset_can_t;
+};
+size_t CANHack_t::kOffset_can_t = offsetof(CANHack_t, _can);
+
+static_assert(sizeof(CANHack_t) == sizeof(mbed::CAN));
+
+static auto GetCANAPI(mbed::CAN& can) -> can_t* {
+  auto ptr_can = reinterpret_cast<uintptr_t>(&can) + CANHack_t::kOffset_can_t;
+  return reinterpret_cast<can_t*>(ptr_can);
+}
+}  // namespace
 
 class MbedCAN {
  public:
@@ -43,7 +58,14 @@ class MbedCAN {
 
   void ResetPeripherals() { can_.reset(); }
 
-  void ActivateFilter(int filter_num, CANFilter filter) {
+  void ChangeBaudrate(int frequency) { can_.frequency(frequency); }
+
+  void ChangeMode(nano_hw::can::CANMode mode) {
+    // Mbed doesn't support loopback mode directly
+    (void)mode;
+  }
+
+  void SetFilter(int filter_num, CANFilter filter) {
     if (filter.filter_type == CANFilter::Type::kMask) {
       can_.filter(filter.filter.mask_filter.id, filter.filter.mask_filter.mask,
                   CANStandard, filter_num);
@@ -56,6 +78,21 @@ class MbedCAN {
   void DeactivateFilter(int filter_num, CANFilter filter) {
     // Mbed doesn't have explicit deactivate, set to accept nothing
     can_.filter(0, 0, CANStandard, filter_num);
+  }
+
+  bool ReceiveRaw(HWCANMessage& msg) {
+    auto* hal_can = GetCANAPI(can_);
+
+    MbedCANMessage mbed_msg;
+    if (can_read(hal_can, reinterpret_cast<CAN_Message*>(&mbed_msg), 0)) {
+      msg.id = mbed_msg.id;
+      msg.len = mbed_msg.len;
+      for (int i = 0; i < mbed_msg.len && i < 8; ++i) {
+        msg.data[i] = mbed_msg.data[i];
+      }
+      return true;
+    }
+    return false;
   }
 
  private:
@@ -82,71 +119,5 @@ class MbedCAN {
   mbed::CAN can_;
 };
 
-void* nano_hw::can::AllocInterface(nano_hw::Pin transmit_pin,
-                                   nano_hw::Pin receive_pin, int frequency,
-                                   ICallbacks* callbacks,
-                                   void* callback_context) {
-  return new MbedCAN(transmit_pin, receive_pin, frequency, callbacks,
-                     callback_context);
-}
-
-void nano_hw::can::FreeInterface(void* interface) {
-  delete static_cast<MbedCAN*>(interface);
-}
-
-bool nano_hw::can::SendMessageImpl(void* interface, CANMessage msg) {
-  return static_cast<MbedCAN*>(interface)->SendMessage(msg);
-}
-
-int nano_hw::can::TransmitErrorsImpl(void* interface) {
-  return static_cast<MbedCAN*>(interface)->TransmitErrors();
-}
-
-int nano_hw::can::ReceiveErrorsImpl(void* interface) {
-  return static_cast<MbedCAN*>(interface)->ReceiveErrors();
-}
-
-void nano_hw::can::ResetPeripheralsImpl(void* interface) {
-  static_cast<MbedCAN*>(interface)->ResetPeripherals();
-}
-
-void nano_hw::can::SetFilterImpl(void* interface, int filter_num,
-                                 CANFilter filter) {
-  static_cast<MbedCAN*>(interface)->ActivateFilter(filter_num, filter);
-}
-
-void nano_hw::can::DeactivateFilterImpl(void* interface, int filter_num,
-                                        CANFilter filter) {
-  static_cast<MbedCAN*>(interface)->DeactivateFilter(filter_num, filter);
-}
-
-namespace {
-class CANHack_t : private mbed::CAN {
- public:
-  static std::size_t kOffset_can_t;
-};
-size_t CANHack_t::kOffset_can_t = offsetof(CANHack_t, _can);
-
-static_assert(sizeof(CANHack_t) == sizeof(mbed::CAN));
-
-static auto GetCANAPI(mbed::CAN& can) -> can_t* {
-  auto ptr_can = reinterpret_cast<uintptr_t>(&can) + CANHack_t::kOffset_can_t;
-  return reinterpret_cast<can_t*>(ptr_can);
-}
-}  // namespace
-
-bool nano_hw::can::ReceiveRawImpl(void* interface, CANMessage& msg) {
-  auto* can = static_cast<MbedCAN*>(interface);
-  auto* hal_can = GetCANAPI(can->can_);
-
-  MbedCANMessage mbed_msg;
-  if (can_read(hal_can, reinterpret_cast<CAN_Message*>(&mbed_msg), 0)) {
-    msg.id = mbed_msg.id;
-    msg.len = mbed_msg.len;
-    for (int i = 0; i < mbed_msg.len && i < 8; ++i) {
-      msg.data[i] = mbed_msg.data[i];
-    }
-    return true;
-  }
-  return false;
-}
+// CANImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::can::CANImpl<MbedCAN>;

@@ -1,15 +1,28 @@
 #pragma once
 
 #include <Nano/clock.hpp>
+#include <chrono>
+#include <concepts>
 
 namespace nano_hw {
 
-// C++'s chrono clock
-struct HighResClock_Impl {
- public:
-  static uint64_t Now();
+using HighResClockDuration = std::chrono::milliseconds;
+
+template <typename T>
+concept HighResClockLike = requires() {
+  {T::Now()}->std::same_as<HighResClockDuration>;
 };
 
-using HighResClock = Nano::CxxClock<HighResClock_Impl>;
+template <HighResClockLike T>
+using HighResClock = Nano::CxxClock<HighResClockDuration, T>;
+
+HighResClockDuration HighResClock_Now();
+
+class DynHighResClock {
+ public:
+  static auto Now() { return nano_hw::HighResClock_Now(); }
+};
+
+static_assert(HighResClockLike<DynHighResClock>);
 
 }  // namespace nano_hw

@@ -5,20 +5,19 @@
 
 namespace Nano {
 
-template <typename T>
+template <typename T, typename Dur>
 concept Clock = requires() {
-  // Now() returns current time in microseconds
-  {T::Now()}->std::same_as<uint64_t>;
+  {T::Now()}->std::same_as<Dur>;
 };
 
 struct DummyClock {
-  static uint64_t Now();
+  static std::chrono::microseconds Now();
 };
 
-template <Clock Clk>
+template <typename Duration, Clock<Duration> Clk>
 class CxxClock {
  public:
-  using duration = std::chrono::microseconds;
+  using duration = Duration;
   using rep = duration::rep;
   using period = duration::period;
   using time_point = std::chrono::time_point<CxxClock>;
@@ -26,6 +25,7 @@ class CxxClock {
 
   static time_point now() { return time_point(duration(Clk::Now())); }
 };
-static_assert(std::chrono::is_clock_v<CxxClock<DummyClock>>);
+static_assert(
+    std::chrono::is_clock_v<CxxClock<std::chrono::microseconds, DummyClock>>);
 
 }  // namespace Nano

@@ -1,5 +1,5 @@
 #include <mbed.h>
-#include <NanoHW/pwm.hpp>
+#include <NanoHW/pwm_impl.hpp>
 
 class MbedPwmOut {
  public:
@@ -15,30 +15,9 @@ class MbedPwmOut {
 
   void SetPeriod(float period_s) { pwm_out_.period(period_s); }
 
-  void SetPeriodUs(int period_us) { pwm_out_.period_us(period_us); }
-
-  void SetPeriodMs(int period_ms) { pwm_out_.period_ms(period_ms); }
-
  private:
   mbed::PwmOut pwm_out_;
 };
 
-void* nano_hw::DynPwmOut::AllocInstance(Pin pin) {
-  return new MbedPwmOut(pin);
-}
-
-void nano_hw::DynPwmOut::FreeInstance(void* instance) {
-  delete static_cast<MbedPwmOut*>(instance);
-}
-
-void nano_hw::DynPwmOut::Write(float duty_cycle) {
-  static_cast<MbedPwmOut*>(instance_)->Write(duty_cycle);
-}
-
-float nano_hw::DynPwmOut::Read() {
-  return static_cast<MbedPwmOut*>(instance_)->Read();
-}
-
-void nano_hw::DynPwmOut::SetPeriod(float period_s) {
-  static_cast<MbedPwmOut*>(instance_)->SetPeriod(period_s);
-}
+// PwmOutImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::PwmOutImpl<MbedPwmOut>;

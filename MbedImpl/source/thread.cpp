@@ -1,5 +1,5 @@
 #include <mbed.h>
-#include <NanoHW/thread.hpp>
+#include <NanoHW/thread_impl.hpp>
 
 #include <functional>
 
@@ -100,34 +100,5 @@ class MbedThread {
   bool terminated_;
 };
 
-void* nano_hw::thread::AllocInterface(ThreadPriority priority,
-                                      uint32_t stack_size,
-                                      unsigned char* stack_mem,
-                                      const char* name) {
-  return new MbedThread(priority, stack_size, stack_mem, name);
-}
-
-void nano_hw::thread::FreeInterface(void* interface) {
-  delete static_cast<MbedThread*>(interface);
-}
-
-void nano_hw::thread::StartImpl(void* interface, std::function<void()> task) {
-  static_cast<MbedThread*>(interface)->Start(task);
-}
-
-void nano_hw::thread::JoinImpl(void* interface) {
-  static_cast<MbedThread*>(interface)->Join();
-}
-
-void nano_hw::thread::TerminateImpl(void* interface) {
-  static_cast<MbedThread*>(interface)->Terminate();
-}
-
-void nano_hw::thread::SetPriorityImpl(void* interface,
-                                      ThreadPriority priority) {
-  static_cast<MbedThread*>(interface)->SetPriority(priority);
-}
-
-ThreadPriority nano_hw::thread::GetPriorityImpl(void* interface) {
-  return static_cast<MbedThread*>(interface)->GetPriority();
-}
+// ThreadImpl をインスタンス化して Friend-Injection を有効化
+template class nano_hw::thread::ThreadImpl<MbedThread>;
