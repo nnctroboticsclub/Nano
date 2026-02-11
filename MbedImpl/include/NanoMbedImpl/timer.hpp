@@ -1,6 +1,6 @@
 #pragma once
 #include <mbed.h>
-#include <NanoHW/timer_impl.hpp>
+#include <NanoHW/timer.hpp>
 
 namespace nano_mbed {
 class MbedTimer {

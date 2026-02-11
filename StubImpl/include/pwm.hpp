@@ -1,7 +1,7 @@
 #pragma once
 
 #include "NanoHW/pin.hpp"
-#include "NanoHW/pwm_impl.hpp"
+#include "NanoHW/pwm.hpp"
 
 #include <iostream>
 

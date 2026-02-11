@@ -1,5 +1,5 @@
 #pragma once
-#include "NanoHW/can_impl.hpp"
+#include "NanoHW/can.hpp"
 
 #include <iostream>
 

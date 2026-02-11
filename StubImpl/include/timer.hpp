@@ -1,5 +1,5 @@
 #pragma once
-#include "NanoHW/timer_impl.hpp"
+#include "NanoHW/timer.hpp"
 
 #include <chrono>
 #include <iostream>

@@ -2,7 +2,7 @@
 
 #include <mbed.h>
 
-#include <NanoHW/high_res_clock_impl.hpp>
+#include <NanoHW/high_res_clock.hpp>
 
 namespace nano_mbed {
 class MbedHighResClock {

@@ -1,5 +1,5 @@
 #pragma once
-#include <NanoHW/system_impl.hpp>
+#include <NanoHW/system.hpp>
 
 #include "platform/mbed_power_mgmt.h"
 

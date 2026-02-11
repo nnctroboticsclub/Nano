@@ -1,7 +1,7 @@
 #pragma once
 
 #include <NanoHW/pin.hpp>
-#include <NanoHW/uart_impl.hpp>
+#include <NanoHW/uart.hpp>
 
 #include <algorithm>
 #include <cstdint>

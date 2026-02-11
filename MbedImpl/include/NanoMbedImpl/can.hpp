@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mbed.h>
-#include <NanoHW/can_impl.hpp>
+#include <NanoHW/can.hpp>
 
 namespace nano_mbed {
 using nano_hw::can::CANFilter;

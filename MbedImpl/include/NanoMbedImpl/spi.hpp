@@ -1,6 +1,6 @@
 #pragma once
 #include <mbed.h>
-#include <NanoHW/spi_impl.hpp>
+#include <NanoHW/spi.hpp>
 
 #include <vector>
 

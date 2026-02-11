@@ -1,6 +1,6 @@
 #pragma once
 
-#include <NanoHW/thread_impl.hpp>
+#include <NanoHW/thread.hpp>
 
 #include <functional>
 #include <iostream>

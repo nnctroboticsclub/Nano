@@ -1,6 +1,6 @@
 #pragma once
 #include <mbed.h>
-#include <NanoHW/digital_out_impl.hpp>
+#include <NanoHW/digital_out.hpp>
 
 namespace nano_mbed {
 class MbedDigitalOut {

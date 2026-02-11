@@ -3,7 +3,7 @@
 #include <functional>
 
 #include <mbed.h>
-#include <NanoHW/thread_impl.hpp>
+#include <NanoHW/thread.hpp>
 
 namespace nano_mbed {
 using ::ThreadPriority;

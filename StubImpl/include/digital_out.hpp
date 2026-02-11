@@ -1,5 +1,5 @@
 #pragma once
-#include "NanoHW/digital_out_impl.hpp"
+#include "NanoHW/digital_out.hpp"
 #include "NanoHW/pin.hpp"
 
 #include <iostream>

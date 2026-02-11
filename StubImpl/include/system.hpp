@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-#include <NanoHW/system_impl.hpp>
+#include <NanoHW/system.hpp>
 
 namespace nano_stub {
 class MbedSleepManager {

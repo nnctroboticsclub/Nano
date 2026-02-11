@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mbed.h>
-#include <NanoHW/uart_impl.hpp>
+#include <NanoHW/uart.hpp>
 
 #include <cstddef>
 

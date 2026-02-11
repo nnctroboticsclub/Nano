@@ -2,7 +2,6 @@
 
 #include <NanoHW/high_res_clock.hpp>
 #include <chrono>
-#include "NanoHW/high_res_clock_impl.hpp"
 
 namespace nano_stub {
 class StubHighResClock {

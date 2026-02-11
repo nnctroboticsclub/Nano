@@ -1,6 +1,6 @@
 #pragma once
 #include <NanoHW/pin.hpp>
-#include <NanoHW/spi_impl.hpp>
+#include <NanoHW/spi.hpp>
 
 #include <iostream>
 #include <vector>

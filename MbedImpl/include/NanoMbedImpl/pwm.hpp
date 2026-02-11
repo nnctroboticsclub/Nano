@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mbed.h>
-#include <NanoHW/pwm_impl.hpp>
+#include <NanoHW/pwm.hpp>
 
 namespace nano_mbed {
 class MbedPwmOut {
