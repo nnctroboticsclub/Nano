@@ -13,31 +13,66 @@ void SetFrequencySPIImpl(void* inst, int frequency);
 int TransferSPIImpl(void* inst, std::vector<uint8_t> const& tx_buffer,
                     std::vector<uint8_t>& rx_buffer);
 
-/// @brief SPI の実装クラスから動的ディスパッチ関数を生成
-/// @tparam Impl SPI の実装クラス (コールバックを持つ通常のクラス)
-template <typename Impl>
-class SPIImpl {
+/// @brief SPI conceptを満たす型から動的ディスパッチ関数を生成
+/// @tparam SPIT SPI conceptを満たすテンプレートクラス
+template <template <SPIConfig> typename SPIT>
+requires SPI<SPIT> class SPIImpl {
+  // Config内のOnTransferからコールバックを呼び出すためのConfig
+  struct CallbackConfig {
+    struct OnTransfer {
+      static void execute(void* context, std::vector<uint8_t> const& tx,
+                          std::vector<uint8_t> const& rx) {
+        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
+        if (ctx->first != nullptr) {
+          ctx->first->OnTransfer(ctx->second, tx, rx);
+        }
+      }
+    };
+  };
+
+  using ImplType = SPIT<CallbackConfig>;
+
   friend void* AllocSPIInterfaceImpl(Pin miso, Pin mosi, Pin sclk,
                                      int frequency, ICallbacks* callbacks,
                                      void* callback_context) {
-    return new Impl(miso, mosi, sclk, frequency, callbacks, callback_context);
+    auto* impl = new ImplType(miso, mosi, sclk, frequency);
+    auto* ctx = new std::pair<ICallbacks*, void*>(callbacks, callback_context);
+    // implとコンテキストをペアで保存
+    return new std::pair<ImplType*, std::pair<ICallbacks*, void*>*>(impl, ctx);
   }
 
   friend void FreeSPIInterfaceImpl(void* inst) {
-    delete static_cast<Impl*>(inst);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    delete pair->first;
+    delete pair->second;
+    delete pair;
   }
 
   friend void SetModeSPIImpl(void* inst, SPIFormat format) {
-    static_cast<Impl*>(inst)->SetMode(format);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    pair->first->SetMode(format);
   }
 
   friend void SetFrequencySPIImpl(void* inst, int frequency) {
-    static_cast<Impl*>(inst)->SetFrequency(frequency);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    pair->first->SetFrequency(frequency);
   }
 
   friend int TransferSPIImpl(void* inst, std::vector<uint8_t> const& tx_buffer,
                              std::vector<uint8_t>& rx_buffer) {
-    return static_cast<Impl*>(inst)->Transfer(tx_buffer, rx_buffer);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    int result = pair->first->Transfer(tx_buffer, rx_buffer);
+    // コールバックを呼び出す
+    CallbackConfig::OnTransfer::execute(pair->second, tx_buffer, rx_buffer);
+    return result;
   }
 };
 

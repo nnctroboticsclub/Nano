@@ -23,16 +23,14 @@ int ToMbedMode(SPIFormat format) {
 }
 }  // namespace
 
+template <nano_hw::spi::SPIConfig Config>
 class MbedSPI {
  public:
   MbedSPI(nano_hw::Pin miso, nano_hw::Pin mosi, nano_hw::Pin sclk,
-          int frequency, nano_hw::spi::ICallbacks* callbacks,
-          void* callback_context)
+          int frequency)
       : spi_(static_cast<PinName>(mosi.number),
              static_cast<PinName>(miso.number),
-             static_cast<PinName>(sclk.number)),
-        callbacks_(callbacks),
-        callback_context_(callback_context) {
+             static_cast<PinName>(sclk.number)) {
     spi_.frequency(frequency);
   }
 
@@ -46,16 +44,15 @@ class MbedSPI {
       rx[i] = static_cast<uint8_t>(spi_.write(tx[i]));
     }
 
-    if (callbacks_ != nullptr) {
-      callbacks_->OnTransfer(callback_context_, tx, rx);
-    }
+    Config::OnTransfer::execute(this, tx, rx);
 
     return static_cast<int>(tx.size());
   }
 
  private:
   mbed::SPI spi_;
-  nano_hw::spi::ICallbacks* callbacks_;
-  void* callback_context_;
 };
+
+static_assert(nano_hw::spi::SPI<MbedSPI>);
+
 }  // namespace nano_mbed

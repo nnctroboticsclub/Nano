@@ -3,8 +3,15 @@
 #include <NanoHW/timer.hpp>
 
 namespace nano_mbed {
+
+// MbedTimer implementation satisfies Timer concept
+// It is a template that accepts TimerConfig and implements the Timer interface
+template <nano_hw::timer::TimerConfig Config>
 class MbedTimer {
  public:
+  // Default constructor for Timer concept satisfaction
+  MbedTimer() = default;
+
   MbedTimer(nano_hw::timer::ICallbacks* callbacks, void* callback_context) {
     (void)callbacks;         // Unused
     (void)callback_context;  // Unused
@@ -23,7 +30,9 @@ class MbedTimer {
 
  private:
   mbed::Timer timer_;
-  // nano_hw::timer::ICallbacks* callbacks_;  // Unused - timer doesn't have callbacks yet
-  // void* callback_context_;  // Unused
 };
+
+// Verify MbedTimer satisfies Timer concept
+static_assert(nano_hw::timer::Timer<MbedTimer>);
+
 }  // namespace nano_mbed

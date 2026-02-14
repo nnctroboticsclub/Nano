@@ -12,31 +12,76 @@ void RebaudUARTImpl(void* inst, int frequency);
 size_t SendUARTImpl(void* inst, void* buffer, size_t size);
 size_t ReceiveUARTImpl(void* inst, void* buffer, size_t size);
 
-/// @brief UART の実装クラスから動的ディスパッチ関数を生成
-/// @tparam Impl UART の実装クラス (コールバックを持つ通常のクラス)
-template <typename Impl>
-class UARTImpl {
+/// @brief UART conceptを満たす型から動的ディスパッチ関数を生成
+/// @tparam UartT UART conceptを満たすテンプレートクラス
+template <template <UARTConfig> typename UartT>
+requires UART<UartT> class UARTImpl {
+  // Config内のコールバックを呼び出すためのConfig
+  struct CallbackConfig {
+    struct OnUARTRx {
+      static void execute(void* context, const uint8_t* buffer, size_t size) {
+        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
+        if (ctx->first != nullptr) {
+          ctx->first->OnUARTRx(ctx->second, buffer, size);
+        }
+      }
+    };
+    struct OnUARTTx {
+      static void execute(void* context, const uint8_t* buffer, size_t size) {
+        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
+        if (ctx->first != nullptr) {
+          ctx->first->OnUARTTx(ctx->second, buffer, size);
+        }
+      }
+    };
+  };
+
+  using ImplType = UartT<CallbackConfig>;
+
   friend void* AllocUARTInterfaceImpl(Pin transmit_pin, Pin receive_pin,
                                       int frequency, ICallbacks* callbacks,
                                       void* callback_context) {
-    return new Impl(transmit_pin, receive_pin, frequency, callbacks,
-                    callback_context);
+    auto* impl = new ImplType(transmit_pin, receive_pin, frequency);
+    auto* ctx = new std::pair<ICallbacks*, void*>(callbacks, callback_context);
+    return new std::pair<ImplType*, std::pair<ICallbacks*, void*>*>(impl, ctx);
   }
 
   friend void FreeUARTInterfaceImpl(void* inst) {
-    delete static_cast<Impl*>(inst);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    delete pair->first;
+    delete pair->second;
+    delete pair;
   }
 
   friend void RebaudUARTImpl(void* inst, int frequency) {
-    static_cast<Impl*>(inst)->Rebaud(frequency);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    pair->first->Rebaud(frequency);
   }
 
   friend size_t SendUARTImpl(void* inst, void* buffer, size_t size) {
-    return static_cast<Impl*>(inst)->Send(buffer, size);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    size_t result = pair->first->Send(buffer, size);
+    // コールバックを呼び出す
+    CallbackConfig::OnUARTTx::execute(
+        pair->second, static_cast<const uint8_t*>(buffer), size);
+    return result;
   }
 
   friend size_t ReceiveUARTImpl(void* inst, void* buffer, size_t size) {
-    return static_cast<Impl*>(inst)->Receive(buffer, size);
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    size_t result = pair->first->Receive(buffer, size);
+    // コールバックを呼び出す
+    CallbackConfig::OnUARTRx::execute(
+        pair->second, static_cast<const uint8_t*>(buffer), size);
+    return result;
   }
 };
 

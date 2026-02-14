@@ -33,4 +33,7 @@ class MockPwmOut {
   float duty_cycle_;
   int period_us_;
 };
+
+static_assert(nano_hw::PwmOut<MockPwmOut>,
+              "MockPwmOut must satisfy nano_hw::PwmOut concept");
 }  // namespace nano_stub

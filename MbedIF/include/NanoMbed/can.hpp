@@ -216,7 +216,7 @@ inline HAL_StatusTypeDef HAL_CAN_ConfigFilter(
 inline int can_read(can_t* obj, CANMessage* msg, int handle) {
   (void)handle;
   nano_hw::can::CANMessage nano_msg;
-  bool result = nano_hw::can::ReceiveRawImpl(obj->CanHandle.can, nano_msg);
+  bool result = nano_hw::can::TryReceiveImpl(obj->CanHandle.can, nano_msg);
   if (!result) {
     return 0;  // No message arrived
   }

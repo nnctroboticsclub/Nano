@@ -19,8 +19,8 @@ enum class Parity : uint8_t {
 };
 
 template <typename T>
-concept UARTConfig = Policy<typename T::OnUARTRx, void*, void*, size_t> &&
-                     Policy<typename T::OnUARTTx, void*, void*, size_t>;
+concept UARTConfig = Policy<typename T::OnUARTRx, void*, const uint8_t*, size_t> &&
+                     Policy<typename T::OnUARTTx, void*, const uint8_t*, size_t>;
 
 struct DummyUARTConfig {
   using OnUARTRx = nano_hw::Ignore;
@@ -41,8 +41,8 @@ concept UART =
 
 struct ICallbacks {
  public:
-  virtual void OnUARTRx(void* context, void* buffer, size_t size) = 0;
-  virtual void OnUARTTx(void* context, void* buffer, size_t size) = 0;
+  virtual void OnUARTRx(void* context, const uint8_t* buffer, size_t size) = 0;
+  virtual void OnUARTTx(void* context, const uint8_t* buffer, size_t size) = 0;
 };
 
 void* AllocInterface(Pin transmit_pin, Pin receive_pin, int frequency,
@@ -56,10 +56,10 @@ template <UARTConfig Config>
 class DynUART {
   struct Callbacks : public ICallbacks {
    public:
-    void OnUARTRx(void* context, void* buffer, size_t size) final {
+    void OnUARTRx(void* context, const uint8_t* buffer, size_t size) final {
       Config::OnUARTRx::execute(context, buffer, size);
     }
-    void OnUARTTx(void* context, void* buffer, size_t size) final {
+    void OnUARTTx(void* context, const uint8_t* buffer, size_t size) final {
       Config::OnUARTTx::execute(context, buffer, size);
     }
   };

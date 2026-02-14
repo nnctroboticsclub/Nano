@@ -18,4 +18,7 @@ class MbedDigitalOut {
  private:
   mbed::DigitalOut digital_out_;
 };
+
+static_assert(nano_hw::DigitalOut<MbedDigitalOut>,
+              "MbedDigitalOut must satisfy nano_hw::DigitalOut concept");
 }  // namespace nano_mbed

@@ -102,4 +102,7 @@ class MbedThread {
   rtos::Thread* thread_;
   bool terminated_;
 };
+
+static_assert(nano_hw::thread::Thread<MbedThread>,
+              "MbedThread must satisfy nano_hw::thread::Thread concept");
 }  // namespace nano_mbed

@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace nano_stub {
-using nano_hw::spi::ICallbacks;
 using nano_hw::spi::SPIFormat;
 
 namespace {
@@ -25,16 +24,12 @@ const char* ToModeName(SPIFormat format) {
 }
 }  // namespace
 
+template <nano_hw::spi::SPIConfig Config>
 class MockSPI {
  public:
   MockSPI(nano_hw::Pin miso, nano_hw::Pin mosi, nano_hw::Pin sclk,
-          int frequency, ICallbacks* callbacks, void* callback_context)
-      : miso_(miso),
-        mosi_(mosi),
-        sclk_(sclk),
-        frequency_(frequency),
-        callbacks_(callbacks),
-        callback_context_(callback_context) {
+          int frequency)
+      : miso_(miso), mosi_(mosi), sclk_(sclk), frequency_(frequency) {
     std::cout << "MockSPI initialized: MOSI " << mosi_.number << ", MISO "
               << miso_.number << ", SCLK " << sclk_.number << ", frequency "
               << frequency_ << "\n";
@@ -60,11 +55,14 @@ class MockSPI {
     }
     std::cout << "]\n";
 
-    if (callbacks_ != nullptr) {
-      callbacks_->OnTransfer(callback_context_, tx, rx);
-    }
-
     return static_cast<int>(tx.size());
+  }
+
+  // Simulate transfer complete and invoke the callback
+  void SimulateTransferComplete(std::vector<uint8_t> const& rx_data) {
+    std::cout << "MockSPI SimulateTransferComplete: size " << rx_data.size()
+              << "\n";
+    Config::OnSPITransferComplete::execute(nullptr, rx_data);
   }
 
  private:
@@ -72,7 +70,8 @@ class MockSPI {
   nano_hw::Pin mosi_;
   nano_hw::Pin sclk_;
   int frequency_;
-  ICallbacks* callbacks_;
-  void* callback_context_;
 };
+
+static_assert(nano_hw::spi::SPI<MockSPI>);
+
 }  // namespace nano_stub

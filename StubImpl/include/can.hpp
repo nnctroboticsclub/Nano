@@ -8,15 +8,13 @@
 namespace nano_stub {
 using namespace nano_hw::can;
 
+template <nano_hw::can::CANConfig Config>
 class MockCAN {
  public:
-  MockCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency,
-          ICallbacks* callbacks, void* callback_context)
+  MockCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency)
       : transmit_pin_(transmit_pin),
         receive_pin_(receive_pin),
-        frequency_(frequency),
-        callbacks_(callbacks),
-        callback_context_(callback_context) {
+        frequency_(frequency) {
     std::cout << "MockCAN initialized: TX pin " << transmit_pin_.number
               << ", RX pin " << receive_pin_.number << ", frequency "
               << frequency << "\n";
@@ -33,9 +31,6 @@ class MockCAN {
     std::cout << std::dec << "]\n";
 
     // Simulate successful transmission
-    if (callbacks_) {
-      callbacks_->OnCANTransmit(callback_context_, msg);
-    }
     return true;
   }
 
@@ -63,11 +58,6 @@ class MockCAN {
               << "\n";
   }
 
-  bool ReceiveRaw(CANMessage& msg) {
-    std::cout << "CAN ReceiveRaw called\n";
-    return false;  // Mock always returns false
-  }
-
   void SetFilter(int filter_num, CANFilter filter) {
     std::cout << "CAN SetFilter: filter_num " << filter_num << ", type ";
     if (filter.filter_type == CANFilter::Type::kMask) {
@@ -84,11 +74,39 @@ class MockCAN {
     std::cout << "CAN DeactivateFilter: filter_num " << filter_num << "\n";
   }
 
+  // Simulate receiving a CAN message and invoke the callback
+  void SimulateReceive(CANMessage msg) {
+    std::cout << "MockCAN SimulateReceive: ID 0x" << std::hex << msg.id
+              << std::dec << ", len " << static_cast<int>(msg.len) << "\n";
+    Config::OnCANReceived::execute(nullptr, msg);
+  }
+
+  // Simulate a bus error event
+  void SimulateBusError() {
+    std::cout << "MockCAN SimulateBusError\n";
+    Config::OnCANBusError::execute(nullptr);
+  }
+
+  // Simulate a passive error event
+  void SimulatePassiveError() {
+    std::cout << "MockCAN SimulatePassiveError\n";
+    Config::OnCANPassiveError::execute(nullptr);
+  }
+
+  // Try to receive a CAN message (CANWithPolling support)
+  bool TryReceive(CANMessage& msg) {
+    std::cout << "MockCAN TryReceive called\n";
+    // Mock implementation: no message available by default
+    return false;
+  }
+
  private:
   nano_hw::Pin transmit_pin_;
   nano_hw::Pin receive_pin_;
   int frequency_;
-  ICallbacks* callbacks_;
-  void* callback_context_;
 };
+
+static_assert(nano_hw::can::CAN<MockCAN>);
+static_assert(nano_hw::can::CANWithPolling<MockCAN>);
+
 }  // namespace nano_stub

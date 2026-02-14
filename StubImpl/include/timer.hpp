@@ -4,16 +4,13 @@
 #include <chrono>
 #include <iostream>
 
-using nano_hw::timer::ICallbacks;
-
 namespace nano_stub {
+
+template <nano_hw::timer::TimerConfig Config>
 class MockTimer {
  public:
-  MockTimer(ICallbacks* callbacks, void* callback_context)
-      : callbacks_(callbacks),
-        callback_context_(callback_context),
-        start_time_(std::chrono::steady_clock::now()),
-        accumulated_time_(0) {
+  MockTimer()
+      : start_time_(std::chrono::steady_clock::now()), accumulated_time_(0) {
     std::cout << "MockTimer initialized\n";
   }
 
@@ -52,18 +49,15 @@ class MockTimer {
     return accumulated_time_;
   }
 
-  // Simulate tick interrupt (for testing purposes)
-  void SimulateTick() {
-    if (callbacks_ != nullptr) {
-      callbacks_->OnTick(callback_context_);
-    }
-  }
+  // Simulate tick interrupt and invoke the callback
+  void SimulateTick() { Config::OnTick::execute(nullptr); }
 
  private:
-  ICallbacks* callbacks_;
-  void* callback_context_;
   std::chrono::steady_clock::time_point start_time_;
   bool is_running_ = false;
   std::chrono::milliseconds accumulated_time_;
 };
+
+static_assert(nano_hw::timer::Timer<MockTimer>);
+
 }  // namespace nano_stub

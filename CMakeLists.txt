@@ -30,6 +30,28 @@ add_subdirectory(StubImpl)
 add_subdirectory(Nano)
 add_subdirectory(NanoHW)
 
+# Add MbedImplTests as an ExternalProject (requires ARM toolchain)
+option(BUILD_MBED_IMPL_TESTS "Build MbedImpl tests (requires ARM toolchain)" OFF)
+if(BUILD_MBED_IMPL_TESTS)
+  include(ExternalProject)
+
+  # First, install Nano to a temporary location for MbedImplTests to use
+  set(NANO_INSTALL_DIR ${CMAKE_BINARY_DIR}/nano_install)
+
+  ExternalProject_Add(MbedImplTests
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MbedImplTests
+    BINARY_DIR ${CMAKE_BINARY_DIR}/MbedImplTests-build
+    CMAKE_ARGS
+      -DCMAKE_PREFIX_PATH=${NANO_INSTALL_DIR}
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    INSTALL_COMMAND ""
+    DEPENDS NanoHW NanoHW_MbedIF
+  )
+
+  message(STATUS "MbedImplTests will be built with ARM toolchain")
+  message(STATUS "  Note: These tests require actual hardware (NUCLEO_F446RE) to run")
+endif()
+
 
 # Install export
 install(EXPORT NanoTargets

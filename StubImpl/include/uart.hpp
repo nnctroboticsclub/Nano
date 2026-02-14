@@ -9,17 +9,12 @@
 #include <iostream>
 
 namespace nano_stub {
-using nano_hw::uart::ICallbacks;
 
+template <nano_hw::uart::UARTConfig Config>
 class MockUART {
  public:
-  MockUART(nano_hw::Pin tx, nano_hw::Pin rx, int baud_rate,
-           ICallbacks* callbacks, void* callback_context)
-      : tx_(tx),
-        rx_(rx),
-        baud_rate_(baud_rate),
-        callbacks_(callbacks),
-        callback_context_(callback_context) {
+  MockUART(nano_hw::Pin tx, nano_hw::Pin rx, int baud_rate)
+      : tx_(tx), rx_(rx), baud_rate_(baud_rate) {
     std::cout << "MockUART initialized: TX " << tx_.number << ", RX "
               << rx_.number << ", baud " << baud_rate_ << "\n";
   }
@@ -31,9 +26,6 @@ class MockUART {
 
   size_t Send(void* buffer, size_t size) {
     std::cout << "MockUART Send: size " << size << "\n";
-    if (callbacks_ != nullptr) {
-      callbacks_->OnUARTTx(callback_context_, buffer, size);
-    }
     return size;
   }
 
@@ -42,17 +34,27 @@ class MockUART {
     if (buffer != nullptr && size > 0) {
       std::memset(buffer, 0xA5, size);
     }
-    if (callbacks_ != nullptr) {
-      callbacks_->OnUARTRx(callback_context_, buffer, size);
-    }
     return size;
+  }
+
+  // Simulate receiving data and invoke the callback
+  void SimulateReceive(const uint8_t* data, size_t size) {
+    std::cout << "MockUART SimulateReceive: size " << size << "\n";
+    Config::OnUARTRx::execute(nullptr, data, size);
+  }
+
+  // Simulate transmission complete and invoke the callback
+  void SimulateTransmitComplete(size_t size) {
+    std::cout << "MockUART SimulateTransmitComplete: size " << size << "\n";
+    Config::OnUARTTx::execute(nullptr, nullptr, size);
   }
 
  private:
   nano_hw::Pin tx_;
   nano_hw::Pin rx_;
   int baud_rate_;
-  ICallbacks* callbacks_;
-  void* callback_context_;
 };
+
+static_assert(nano_hw::uart::UART<MockUART>);
+
 }  // namespace nano_stub

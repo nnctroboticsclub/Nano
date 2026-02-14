@@ -21,4 +21,7 @@ class MbedPwmOut {
  private:
   mbed::PwmOut pwm_out_;
 };
+
+static_assert(nano_hw::PwmOut<MbedPwmOut>,
+              "MbedPwmOut must satisfy nano_hw::PwmOut concept");
 }  // namespace nano_mbed

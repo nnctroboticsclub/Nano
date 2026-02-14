@@ -67,6 +67,13 @@ concept CAN =
   {value.DeactivateFilter(filter_num, filter)}->std::same_as<void>;
 };
 
+/// @brief CAN with polling receive capability (ISR-safe, mutex-free)
+template <template <CANConfig> typename CanT>
+concept CANWithPolling = CAN<CanT> &&
+    requires(CanT<DummyCANConfig> value, CANMessage& msg) {
+  {value.TryReceive(msg)}->std::same_as<bool>;
+};
+
 struct ICallbacks {
  public:
   virtual void OnCANReceived(void* context, CANMessage msg) = 0;
@@ -86,7 +93,7 @@ int ReceiveErrorsImpl(void* interface);
 void ResetPeripheralsImpl(void* interface);
 void SetFilterImpl(void* interface, int filter_num, CANFilter filter);
 void DeactivateFilterImpl(void* interface, int filter_num, CANFilter filter);
-bool ReceiveRawImpl(void* interface, CANMessage& msg);
+bool TryReceiveImpl(void* interface, CANMessage& msg);
 
 template <CANConfig Config>
 class DynCAN {
@@ -135,11 +142,16 @@ class DynCAN {
     DeactivateFilterImpl(interface_, filter_num, filter);
   }
 
+  bool TryReceive(CANMessage& msg) {
+    return TryReceiveImpl(interface_, msg);
+  }
+
  private:
   static inline Callbacks callbacks = {};
   void* interface_;
 };
 
 static_assert(CAN<DynCAN>);
+static_assert(CANWithPolling<DynCAN>);
 
 }  // namespace nano_hw::can

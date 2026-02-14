@@ -23,12 +23,26 @@ static auto GetCANAPI(mbed::CAN& can) -> can_t* {
 }
 }  // namespace
 
+// MbedCAN implementation satisfies CAN concept
+// It is a template that accepts CANConfig and implements the CAN interface
+// Uses Policy-based callbacks via Config parameter
+template <nano_hw::can::CANConfig Config>
 class MbedCAN {
  public:
+  // Default constructor for CAN concept satisfaction
+  MbedCAN() : can_(NC, NC) {}
+
+  // Constructor for CAN concept (3-arg version)
+  MbedCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency)
+      : can_(static_cast<PinName>(receive_pin.number),
+             static_cast<PinName>(transmit_pin.number)) {
+    can_.frequency(frequency);
+  }
+
+  // Constructor with callback context for Config callbacks
   MbedCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency,
-          nano_hw::can::ICallbacks* callbacks, void* callback_context)
-      : callbacks_(callbacks),
-        callback_context_(callback_context),
+          void* callback_context)
+      : callback_context_(callback_context),
         can_(static_cast<PinName>(receive_pin.number),
              static_cast<PinName>(transmit_pin.number)) {
     can_.frequency(frequency);
@@ -47,8 +61,8 @@ class MbedCAN {
     mbed_msg.len = msg.len;
     int result = can_.write(mbed_msg);
 
-    if (result == 1 && callbacks_ != nullptr) {
-      callbacks_->OnCANTransmit(callback_context_, msg);
+    if (result == 1) {
+      Config::OnCANTransmit::execute(callback_context_, msg);
     }
 
     return result == 1;
@@ -108,16 +122,17 @@ class MbedCAN {
         msg.data[i] = mbed_msg.data[i];
       }
 
-      if (callbacks_ != nullptr) {
-        callbacks_->OnCANReceived(callback_context_, msg);
-      }
+      Config::OnCANReceived::execute(callback_context_, msg);
     }
   }
 
-  nano_hw::can::ICallbacks* callbacks_;
   void* callback_context_;
 
  public:
   mbed::CAN can_;
 };
+
+// Verify MbedCAN satisfies CAN concept
+static_assert(nano_hw::can::CAN<MbedCAN>);
+
 }  // namespace nano_mbed

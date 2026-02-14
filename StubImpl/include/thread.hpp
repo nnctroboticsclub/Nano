@@ -61,4 +61,7 @@ class MockThread {
   bool started_;
   bool terminated_;
 };
+
+static_assert(nano_hw::thread::Thread<MockThread>,
+              "MockThread must satisfy nano_hw::thread::Thread concept");
 }  // namespace nano_stub

@@ -22,4 +22,7 @@ class MockDigitalOut {
  private:
   nano_hw::Pin pin_;
 };
+
+static_assert(nano_hw::DigitalOut<MockDigitalOut>,
+              "MockDigitalOut must satisfy nano_hw::DigitalOut concept");
 }  // namespace nano_stub
