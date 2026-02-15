@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "can.hpp"
 
 namespace nano_hw::can {

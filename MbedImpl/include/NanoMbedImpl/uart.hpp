@@ -118,7 +118,9 @@ class MbedUART {
     }
     const auto read = serial_->read(buffer, size);
     if (read > 0) {
-      UARTConfig::OnUARTRx(cb_ctx_, buffer, static_cast<size_t>(read));
+      UARTConfig::OnUARTRx::execute(cb_ctx_,
+                                    static_cast<const uint8_t*>(buffer),
+                                    static_cast<size_t>(read));
     }
     return read > 0 ? static_cast<size_t>(read) : 0U;
   }

@@ -7,30 +7,19 @@
 
 #include "common.hpp"
 
-// Make ThreadPriority values available in global namespace
-using ::ThreadPriority;
-using ::ThreadPriorityAboveNormal;
-using ::ThreadPriorityBelowNormal;
-using ::ThreadPriorityHigh;
-using ::ThreadPriorityIdle;
-using ::ThreadPriorityLow;
-using ::ThreadPriorityNormal;
-using ::ThreadPriorityRealtime;
-
 // Legacy compatibility aliases
-constexpr ThreadPriority osPriorityIdle = ThreadPriorityIdle;
-constexpr ThreadPriority osPriorityLow = ThreadPriorityLow;
-constexpr ThreadPriority osPriorityBelowNormal = ThreadPriorityBelowNormal;
-constexpr ThreadPriority osPriorityNormal = ThreadPriorityNormal;
-constexpr ThreadPriority osPriorityAboveNormal = ThreadPriorityAboveNormal;
-constexpr ThreadPriority osPriorityHigh = ThreadPriorityHigh;
-constexpr ThreadPriority osPriorityRealtime = ThreadPriorityRealtime;
+constexpr ThreadPriority osPriorityIdle = ::ThreadPriorityIdle;
+constexpr ThreadPriority osPriorityLow = ::ThreadPriorityLow;
+constexpr ThreadPriority osPriorityBelowNormal = ::ThreadPriorityBelowNormal;
+constexpr ThreadPriority osPriorityNormal = ::ThreadPriorityNormal;
+constexpr ThreadPriority osPriorityAboveNormal = ::ThreadPriorityAboveNormal;
+constexpr ThreadPriority osPriorityHigh = ::ThreadPriorityHigh;
+constexpr ThreadPriority osPriorityRealtime = ::ThreadPriorityRealtime;
 
 namespace rtos {
-
 class Thread {
  public:
-  Thread(ThreadPriority priority = ThreadPriorityNormal,
+  Thread(::ThreadPriority priority = ::ThreadPriorityNormal,
          uint32_t stack_size = 4096, unsigned char* stack_mem = nullptr,
          const char* name = nullptr)
       : dri_(priority, stack_size, stack_mem, name) {}
@@ -43,9 +32,9 @@ class Thread {
 
   void terminate() { dri_.Terminate(); }
 
-  void set_priority(ThreadPriority priority) { dri_.SetPriority(priority); }
+  void set_priority(::ThreadPriority priority) { dri_.SetPriority(priority); }
 
-  ThreadPriority get_priority() { return dri_.GetPriority(); }
+  ::ThreadPriority get_priority() { return dri_.GetPriority(); }
 
  private:
   nano_hw::thread::DynThread dri_;

@@ -50,3 +50,9 @@ nano_hw_mbed_impl(NanoHWImpl_Test StaticMbedOS-NUCLEO_F446RE)
 
 # Add test subdirectory
 add_subdirectory(tests)
+
+add_library(NanoMbedImplUnit STATIC impl_unit.cpp)
+target_link_libraries(NanoMbedImplUnit PRIVATE
+  NanoHWImpl_Test
+  Nano::NanoHW
+)
