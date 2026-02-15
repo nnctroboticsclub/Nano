@@ -7,8 +7,8 @@ namespace Nano::utils {
 
 class ScratchBuffer {
   static constexpr const std::size_t kBufferSize = 0x80;
-  static std::array<char, kBufferSize> buffer_isr_;
-  static std::array<char, kBufferSize> buffer_app_;
+  static inline std::array<char, kBufferSize> buffer_isr_{};
+  static inline std::array<char, kBufferSize> buffer_app_{};
 
  public:
   /// @brief ISR 用のバッファを取得する
