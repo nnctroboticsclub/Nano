@@ -12,12 +12,16 @@ template <nano_hw::can::CANConfig Config>
 class MockCAN {
  public:
   MockCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency)
+      : MockCAN(transmit_pin, receive_pin, frequency, nullptr) {}
+  MockCAN(nano_hw::Pin transmit_pin, nano_hw::Pin receive_pin, int frequency,
+          void* ctx)
       : transmit_pin_(transmit_pin),
         receive_pin_(receive_pin),
-        frequency_(frequency) {
+        frequency_(frequency),
+        context_(ctx) {
     std::cout << "MockCAN initialized: TX pin " << transmit_pin_.number
               << ", RX pin " << receive_pin_.number << ", frequency "
-              << frequency << "\n";
+              << frequency << ", context " << context_ << "\n";
   }
 
   bool SendMessage(CANMessage msg) {
@@ -28,7 +32,13 @@ class MockCAN {
       if (i < msg.len - 1)
         std::cout << " ";
     }
-    std::cout << std::dec << "]\n";
+    std::cout << std::dec;
+    std::cout << "("
+              << (msg.format == nano_hw::can::CANMessageFormat::kStandard
+                      ? "Standard"
+                      : "Extended")
+              << ")";
+    std::cout << "]\n";
 
     // Simulate successful transmission
     return true;
@@ -78,19 +88,19 @@ class MockCAN {
   void SimulateReceive(CANMessage msg) {
     std::cout << "MockCAN SimulateReceive: ID 0x" << std::hex << msg.id
               << std::dec << ", len " << static_cast<int>(msg.len) << "\n";
-    Config::OnCANReceived::execute(nullptr, msg);
+    Config::OnCANReceived::execute(context_, msg);
   }
 
   // Simulate a bus error event
   void SimulateBusError() {
     std::cout << "MockCAN SimulateBusError\n";
-    Config::OnCANBusError::execute(nullptr);
+    Config::OnCANBusError::execute(context_);
   }
 
   // Simulate a passive error event
   void SimulatePassiveError() {
     std::cout << "MockCAN SimulatePassiveError\n";
-    Config::OnCANPassiveError::execute(nullptr);
+    Config::OnCANPassiveError::execute(context_);
   }
 
   // Try to receive a CAN message (CANWithPolling support)
@@ -104,6 +114,7 @@ class MockCAN {
   nano_hw::Pin transmit_pin_;
   nano_hw::Pin receive_pin_;
   int frequency_;
+  void* context_;
 };
 
 static_assert(nano_hw::can::CAN<MockCAN>);

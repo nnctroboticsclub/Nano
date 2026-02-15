@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "can.hpp"
+#include "policies.hpp"
 
 namespace nano_hw::can {
 
@@ -24,132 +25,133 @@ bool TryReceiveCANImpl(void* inst, CANMessage& msg);
 /// @tparam CanT CAN conceptを満たすテンプレートクラス
 template <template <CANConfig> typename CanT>
 requires CAN<CanT> class CANImpl {
+  // Context: コールバック情報を一つの型に統合
+  struct Context {
+    ICallbacks* callbacks = nullptr;
+    void* callback_context = nullptr;
+
+    void OnCANReceived(CANMessage msg) {
+      if (callbacks != nullptr) {
+        callbacks->OnCANReceived(callback_context, msg);
+      }
+    }
+
+    void OnCANTransmit(CANMessage msg) {
+      if (callbacks != nullptr) {
+        callbacks->OnCANTransmit(callback_context, msg);
+      }
+    }
+
+    void OnCANBusError() {
+      if (callbacks != nullptr) {
+        callbacks->OnCANBusError(callback_context);
+      }
+    }
+
+    void OnCANPassiveError() {
+      if (callbacks != nullptr) {
+        callbacks->OnCANPassiveError(callback_context);
+      }
+    }
+  };
+
   // Config内のコールバックを呼び出すためのConfig
   struct CallbackConfig {
-    struct OnCANReceived {
-      static void execute(void* context, CANMessage msg) {
-        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
-        if (ctx->first != nullptr) {
-          ctx->first->OnCANReceived(ctx->second, msg);
-        }
-      }
-    };
-    struct OnCANTransmit {
-      static void execute(void* context, CANMessage msg) {
-        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
-        if (ctx->first != nullptr) {
-          ctx->first->OnCANTransmit(ctx->second, msg);
-        }
-      }
-    };
-    struct OnCANBusError {
-      static void execute(void* context) {
-        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
-        if (ctx->first != nullptr) {
-          ctx->first->OnCANBusError(ctx->second);
-        }
-      }
-    };
-    struct OnCANPassiveError {
-      static void execute(void* context) {
-        auto* ctx = static_cast<std::pair<ICallbacks*, void*>*>(context);
-        if (ctx->first != nullptr) {
-          ctx->first->OnCANPassiveError(ctx->second);
-        }
-      }
-    };
+    using OnCANReceived = Direct<[](void* context, CANMessage msg) {
+      auto* ctx = static_cast<Context*>(context);
+      ctx->OnCANReceived(msg);
+    }>;
+    using OnCANTransmit = Direct<[](void* context, CANMessage msg) {
+      auto* ctx = static_cast<Context*>(context);
+      ctx->OnCANTransmit(msg);
+    }>;
+    using OnCANBusError = Direct<[](void* context) {
+      auto* ctx = static_cast<Context*>(context);
+      ctx->OnCANBusError();
+    }>;
+    using OnCANPassiveError = Direct<[](void* context) {
+      auto* ctx = static_cast<Context*>(context);
+      ctx->OnCANPassiveError();
+    }>;
   };
 
   using ImplType = CanT<CallbackConfig>;
 
+  // Instance: ImplType と Context を統合
+  struct Instance {
+    ImplType* impl = nullptr;
+    Context* context = nullptr;
+  };
+
   friend void* AllocCANInterfaceImpl(Pin transmit_pin, Pin receive_pin,
                                      int frequency, ICallbacks* callbacks,
                                      void* callback_context) {
-    auto* impl = new ImplType(transmit_pin, receive_pin, frequency);
-    auto* ctx = new std::pair<ICallbacks*, void*>(callbacks, callback_context);
-    return new std::pair<ImplType*, std::pair<ICallbacks*, void*>*>(impl, ctx);
+    auto* ctx = new Context{callbacks, callback_context};
+    auto* impl = new ImplType(transmit_pin, receive_pin, frequency, ctx);
+    auto* instance = new Instance{impl, ctx};
+    return instance;
   }
 
   friend void FreeCANInterfaceImpl(void* inst) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    delete pair->first;
-    delete pair->second;
-    delete pair;
+    auto* instance = static_cast<Instance*>(inst);
+    delete instance->impl;
+    delete instance->context;
+    delete instance;
   }
 
   friend void ChangeBaudrateCANImpl(void* inst, int frequency) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    pair->first->ChangeBaudrate(frequency);
+    auto* instance = static_cast<Instance*>(inst);
+    instance->impl->ChangeBaudrate(frequency);
   }
 
   friend void ChangeModeCANImpl(void* inst, CANMode mode) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    pair->first->ChangeMode(mode);
+    auto* instance = static_cast<Instance*>(inst);
+    instance->impl->ChangeMode(mode);
   }
 
   friend bool SendMessageCANImpl(void* inst, CANMessage msg) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    bool result = pair->first->SendMessage(msg);
+    auto* instance = static_cast<Instance*>(inst);
+    bool result = instance->impl->SendMessage(msg);
     // コールバックを呼び出す
     if (result) {
-      CallbackConfig::OnCANTransmit::execute(pair->second, msg);
+      CallbackConfig::OnCANTransmit::execute(instance->context, msg);
     }
     return result;
   }
 
   friend int TransmitErrorsCANImpl(void* inst) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    return pair->first->TransmitErrors();
+    auto* instance = static_cast<Instance*>(inst);
+    return instance->impl->TransmitErrors();
   }
 
   friend int ReceiveErrorsCANImpl(void* inst) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    return pair->first->ReceiveErrors();
+    auto* instance = static_cast<Instance*>(inst);
+    return instance->impl->ReceiveErrors();
   }
 
   friend void ResetPeripheralsCANImpl(void* inst) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    pair->first->ResetPeripherals();
+    auto* instance = static_cast<Instance*>(inst);
+    instance->impl->ResetPeripherals();
   }
 
   friend void SetFilterCANImpl(void* inst, int filter_num, CANFilter filter) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    pair->first->SetFilter(filter_num, filter);
+    auto* instance = static_cast<Instance*>(inst);
+    instance->impl->SetFilter(filter_num, filter);
   }
 
   friend void DeactivateFilterCANImpl(void* inst, int filter_num,
                                       CANFilter filter) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    pair->first->DeactivateFilter(filter_num, filter);
+    auto* instance = static_cast<Instance*>(inst);
+    instance->impl->DeactivateFilter(filter_num, filter);
   }
 
   friend bool TryReceiveCANImpl(void* inst, CANMessage& msg) {
-    auto* pair =
-        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
-            inst);
-    if constexpr (requires { pair->first->TryReceive(msg); }) {
-      bool result = pair->first->TryReceive(msg);
+    auto* instance = static_cast<Instance*>(inst);
+    if constexpr (requires { instance->impl->TryReceive(msg); }) {
+      bool result = instance->impl->TryReceive(msg);
       if (result) {
         // 受信成功時にコールバックを呼び出す
-        CallbackConfig::OnCANReceived::execute(pair->second, msg);
+        CallbackConfig::OnCANReceived::execute(instance->context, msg);
       }
       return result;
     } else {

@@ -7,11 +7,13 @@
 #include "policies.hpp"
 
 namespace nano_hw::can {
+enum class CANMessageFormat { kStandard, kExtended };
 
 struct CANMessage {
   uint32_t id = 0;
   uint8_t data[8] = {};  // NOLINT
   uint8_t len = 0;
+  CANMessageFormat format;
 };
 
 enum class CANMode { kNormal, kLoopback };
@@ -48,10 +50,12 @@ struct DummyCANConfig {
 static_assert(CANConfig<DummyCANConfig>);
 
 template <template <CANConfig> typename CanT>
-concept CAN =
-    requires(CanT<DummyCANConfig> value, Pin transmit_pin, Pin receive_pin,
-             int frequency, CANMessage msg, int filter_num, CANFilter filter) {
+concept CAN = requires(CanT<DummyCANConfig> value, Pin transmit_pin,
+                       Pin receive_pin, int frequency, void* instance,
+                       CANMessage msg, int filter_num, CANFilter filter) {
   {CanT<DummyCANConfig>(transmit_pin, receive_pin, frequency)}
+      ->std::same_as<CanT<DummyCANConfig>>;
+  {CanT<DummyCANConfig>(transmit_pin, receive_pin, frequency, instance)}
       ->std::same_as<CanT<DummyCANConfig>>;
 
   {value.SendMessage(msg)}->std::same_as<bool>;
@@ -69,8 +73,8 @@ concept CAN =
 
 /// @brief CAN with polling receive capability (ISR-safe, mutex-free)
 template <template <CANConfig> typename CanT>
-concept CANWithPolling = CAN<CanT> &&
-    requires(CanT<DummyCANConfig> value, CANMessage& msg) {
+concept CANWithPolling =
+    CAN<CanT> && requires(CanT<DummyCANConfig> value, CANMessage& msg) {
   {value.TryReceive(msg)}->std::same_as<bool>;
 };
 
@@ -142,9 +146,7 @@ class DynCAN {
     DeactivateFilterImpl(interface_, filter_num, filter);
   }
 
-  bool TryReceive(CANMessage& msg) {
-    return TryReceiveImpl(interface_, msg);
-  }
+  bool TryReceive(CANMessage& msg) { return TryReceiveImpl(interface_, msg); }
 
  private:
   static inline Callbacks callbacks = {};

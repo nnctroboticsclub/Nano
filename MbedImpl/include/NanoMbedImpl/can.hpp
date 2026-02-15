@@ -54,11 +54,15 @@ class MbedCAN {
   ~MbedCAN() { can_.attach(nullptr, mbed::CAN::RxIrq); }
 
   bool SendMessage(HWCANMessage msg) {
+    using nano_hw::can::CANMessageFormat;
+
     MbedCANMessage mbed_msg(msg.id);
     for (int i = 0; i < msg.len && i < 8; ++i) {
       mbed_msg.data[i] = msg.data[i];
     }
     mbed_msg.len = msg.len;
+    mbed_msg.format =
+        msg.format == CANMessageFormat::kStandard ? CANStandard : CANExtended;
     int result = can_.write(mbed_msg);
 
     if (result == 1) {
