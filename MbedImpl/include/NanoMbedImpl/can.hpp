@@ -117,8 +117,10 @@ class MbedCAN {
 
  private:
   void OnReceive() {
+    auto* hal_can = GetCANAPI(can_);
     MbedCANMessage mbed_msg;
-    if (can_.read(mbed_msg)) {
+
+    if (can_read(hal_can, reinterpret_cast<CAN_Message*>(&mbed_msg), 0)) {
       HWCANMessage msg;
       msg.id = mbed_msg.id;
       msg.len = mbed_msg.len;
