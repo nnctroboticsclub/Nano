@@ -20,6 +20,7 @@
 
         cmakeBuildInputs = [
           rpkgs.cmake-libs
+          rpkgs.clang-toolchain
         ];
         nativeBuildInputs = [
           pkgs.gtest
