@@ -57,6 +57,8 @@ class Timer {
  private:
   nano_hw::timer::DynTimer<MbedTimerConfig> dri_;
   TimerInstanceData* data_;
+
+  friend class Ticker;
 };
 
 // Implementation of TimerInstanceData methods
@@ -73,6 +75,22 @@ inline void MbedTimerConfig::OnTick::execute(void* context) {
     timer->GetInstanceData()->HandleTick();
   }
 }
+
+class Ticker {
+ public:
+  Ticker() = default;
+  ~Ticker() = default;
+
+  void attach(mbed::Callback<void()> func, std::chrono::milliseconds interval) {
+    timer.dri_.EnableTick(interval);
+    timer.attach(func);
+  }
+
+  void detach() { timer.stop(); }
+
+ private:
+  Timer timer;
+};
 
 }  // namespace mbed
 }  // namespace

@@ -4,32 +4,59 @@
 
 namespace nano_mbed {
 
-// MbedTimer implementation satisfies Timer concept
-// It is a template that accepts TimerConfig and implements the Timer interface
 template <nano_hw::timer::TimerConfig Config>
 class MbedTimer {
  public:
-  // Default constructor for Timer concept satisfaction
   MbedTimer() = default;
 
-  MbedTimer(nano_hw::timer::ICallbacks* callbacks, void* callback_context) {
-    (void)callbacks;         // Unused
-    (void)callback_context;  // Unused
+  MbedTimer(nano_hw::timer::ICallbacks* callbacks, void* callback_context)
+      : callbacks_(callbacks), callback_context_(callback_context) {}
+
+  void Reset() {
+    if (std::holds_alternative<mbed::Timer>(instance_)) {
+      std::get<mbed::Timer>(instance_).reset();
+    }
+  }
+  void Start() {
+    if (std::holds_alternative<mbed::Timer>(instance_)) {
+      std::get<mbed::Timer>(instance_).start();
+    }
+  }
+  void Stop() {
+    if (std::holds_alternative<mbed::Timer>(instance_)) {
+      std::get<mbed::Timer>(instance_).stop();
+    }
   }
 
-  void Reset() { timer_.reset(); }
-
-  void Start() { timer_.start(); }
-
-  void Stop() { timer_.stop(); }
-
   std::chrono::milliseconds Read() {
-    auto elapsed = timer_.elapsed_time();
+    if (!std::holds_alternative<mbed::Timer>(instance_)) {
+      return std::chrono::milliseconds(0);
+    }
+    auto& timer = std::get<mbed::Timer>(instance_);
+    auto elapsed = timer.elapsed_time();
     return std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
   }
 
+  bool EnableTick(std::chrono::milliseconds interval) {
+    if (!std::holds_alternative<mbed::Ticker>(instance_)) {
+      instance_ = mbed::Ticker{};
+    }
+    auto& ticker = std::get<mbed::Ticker>(instance_);
+    ticker.attach(
+        [this]() {
+          if (callbacks_ != nullptr) {
+            callbacks_->OnTick(callback_context_);
+          }
+        },
+        interval);
+    return true;
+  }
+
  private:
-  mbed::Timer timer_;
+  std::variant<mbed::Timer, mbed::Ticker> instance_ = mbed::Timer{};
+
+  nano_hw::timer::ICallbacks* callbacks_ = nullptr;
+  void* callback_context_ = nullptr;
 };
 
 // Verify MbedTimer satisfies Timer concept

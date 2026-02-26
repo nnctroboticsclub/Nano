@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 namespace nano_stub {
 
@@ -49,13 +50,24 @@ class MockTimer {
     return accumulated_time_;
   }
 
-  // Simulate tick interrupt and invoke the callback
-  void SimulateTick() { Config::OnTick::execute(nullptr); }
+  bool EnableTick(std::chrono::milliseconds interval) {
+    std::cout << "EnableTick called with interval: " << interval.count()
+              << " ms\n";
+    tick_thread_ = std::thread([this, interval]() {
+      while (true) {
+        std::this_thread::sleep_for(interval);
+        Config::OnTick::execute(this);
+      }
+    });
+    tick_thread_->detach();
+    return true;
+  }
 
  private:
   std::chrono::steady_clock::time_point start_time_;
   bool is_running_ = false;
   std::chrono::milliseconds accumulated_time_;
+  std::optional<std::thread> tick_thread_ = std::nullopt;
 };
 
 static_assert(nano_hw::timer::Timer<MockTimer>);

@@ -23,6 +23,7 @@ concept Timer = requires(TimerT<DummyTimerConfig> value) {
   {value.Start()}->std::same_as<void>;
   {value.Stop()}->std::same_as<void>;
   {value.Read()}->std::same_as<std::chrono::milliseconds>;
+  {value.EnableTick(std::chrono::milliseconds(100))}->std::same_as<bool>;
 };
 
 // Callback interface with instance context support
@@ -36,6 +37,7 @@ void ResetImpl(void* interface);
 void StartImpl(void* interface);
 void StopImpl(void* interface);
 std::chrono::milliseconds ReadImpl(void* interface);
+bool EnableTickImpl(void* interface, std::chrono::milliseconds interval);
 
 // Implementation must be in header for inline
 
@@ -58,6 +60,9 @@ class DynTimer {
   void Start() { StartImpl(interface_); }
   void Stop() { StopImpl(interface_); }
   std::chrono::milliseconds Read() const { return ReadImpl(interface_); }
+  bool EnableTick(std::chrono::milliseconds interval) {
+    return EnableTickImpl(interface_, interval);
+  }
 
  private:
   static Callbacks callbacks;

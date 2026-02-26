@@ -11,6 +11,7 @@ void ResetTimerImpl(void* inst);
 void StartTimerImpl(void* inst);
 void StopTimerImpl(void* inst);
 std::chrono::milliseconds ReadTimerImpl(void* inst);
+bool EnableTickTimerImpl(void* inst, std::chrono::milliseconds interval);
 
 /// @brief Timer conceptを満たす型から動的ディスパッチ関数を生成
 /// @tparam TimerT Timer conceptを満たすテンプレートクラス
@@ -73,6 +74,14 @@ requires Timer<TimerT> class TimerImpl {
             inst);
     return pair->first->Read();
   }
+
+  friend bool EnableTickTimerImpl(void* inst,
+                                  std::chrono::milliseconds interval) {
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    return pair->first->EnableTick(interval);
+  }
 };
 
 // Friend-Injection で定義された関数はオブジェクトファイルに含まれないため、
@@ -94,6 +103,9 @@ void StopImpl(void* inst) {
 }
 std::chrono::milliseconds ReadImpl(void* inst) {
   return ReadTimerImpl(inst);
+}
+bool EnableTickImpl(void* inst, std::chrono::milliseconds interval) {
+  return EnableTickTimerImpl(inst, interval);
 }
 
 }  // namespace nano_hw::timer
