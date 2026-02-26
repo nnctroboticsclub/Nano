@@ -187,11 +187,11 @@
         "stm32f4xx-hal-driver": "stm32f4xx-hal-driver"
       },
       "locked": {
-        "lastModified": 1772081202,
-        "narHash": "sha256-ZWclcn35lqkAIP7nq+VjLnZN+QjfENXYyeZSpcDGo90=",
+        "lastModified": 1772082071,
+        "narHash": "sha256-Z33ckhOwHX/74c/BfE+f5fZ4K2XEcYpCehkz9kjh5AI=",
         "ref": "refs/heads/main",
-        "rev": "6b47fc3f970d8621be9e30ec68087dab68b1868e",
-        "revCount": 82,
+        "rev": "4c46fb4886028d5179de12cbfc08d069a0655f4a",
+        "revCount": 84,
         "type": "git",
         "url": "ssh://git@github.com/nnctroboticsclub/roboenv-nix.git"
       },

@@ -39,7 +39,7 @@ class MbedTimer {
 
   bool EnableTick(std::chrono::milliseconds interval) {
     if (!std::holds_alternative<mbed::Ticker>(instance_)) {
-      instance_ = mbed::Ticker{};
+      instance_.emplace<mbed::Ticker>();
     }
     auto& ticker = std::get<mbed::Ticker>(instance_);
     ticker.attach(
