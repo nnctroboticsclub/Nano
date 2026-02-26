@@ -101,15 +101,15 @@
       "locked": {
         "lastModified": 1772109248,
         "narHash": "sha256-B3uVghkiBQDYKCa8tbq4wF53REHGQ1pcexxGArB1eXM=",
-        "ref": "refs/heads/main",
+        "owner": "nnctroboticsclub",
+        "repo": "roboenv-nix",
         "rev": "e05400487b202120b24a425a7290ebdd9947b570",
-        "revCount": 86,
-        "type": "git",
-        "url": "ssh://git@github.com/nnctroboticsclub/roboenv-nix.git"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/nnctroboticsclub/roboenv-nix.git"
+        "owner": "nnctroboticsclub",
+        "repo": "roboenv-nix",
+        "type": "github"
       }
     },
     "root": {
