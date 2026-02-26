@@ -1,7 +1,7 @@
 {
   inputs.nixpkgs.url = "github:nixos/nixpkgs/release-25.11";
 
-  inputs.roboenv.url = "git+ssh://git@github.com/nnctroboticsclub/roboenv-nix.git";
+  inputs.roboenv.url = "github:nnctroboticsclub/roboenv-nix";
   inputs.roboenv.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs =
