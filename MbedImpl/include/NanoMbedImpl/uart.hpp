@@ -125,6 +125,27 @@ class MbedUART {
     return read > 0 ? static_cast<size_t>(read) : 0U;
   }
 
+  void Format(int data_bits, nano_hw::uart::Parity parity, int stop_bits) {
+    if (serial_ == nullptr) {
+      return;
+    }
+    mbed::SerialBase::Parity mbed_parity;
+    switch (parity) {
+      case nano_hw::uart::Parity::kNone:
+        mbed_parity = mbed::SerialBase::None;
+        break;
+      case nano_hw::uart::Parity::kOdd:
+        mbed_parity = mbed::SerialBase::Odd;
+        break;
+      case nano_hw::uart::Parity::kEven:
+        mbed_parity = mbed::SerialBase::Even;
+        break;
+      default:
+        return;  // Invalid parity
+    }
+    serial_->format(data_bits, mbed_parity, stop_bits);
+  }
+
  private:
   mbed::UnbufferedSerial* serial_;
   PinName tx, rx;

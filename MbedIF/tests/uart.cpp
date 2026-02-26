@@ -36,3 +36,36 @@ TEST(UARTTest, BaudChange) {
 
   SUCCEED();
 }
+
+TEST(UARTTest, Format) {
+  UnbufferedSerial uart(NC, NC, 9600);
+  uart.format(8, SerialBase::None, 1);
+  uart.format(8, SerialBase::None, 2);
+  uart.format(8, SerialBase::Odd, 1);
+  uart.format(8, SerialBase::Odd, 2);
+  uart.format(8, SerialBase::Even, 1);
+  uart.format(8, SerialBase::Even, 2);
+
+  SUCCEED();
+}
+
+TEST(UARTTest, RxIrq) {
+  struct Handler {
+    void Rx() {
+      char buf[2];
+      size_t len = serial_.read(buf, 2);
+
+      ASSERT_EQ(len, 2);
+      EXPECT_EQ(static_cast<unsigned char>(buf[0]), 0xA5);
+      EXPECT_EQ(static_cast<unsigned char>(buf[1]), 0x5A);
+    }
+
+    UnbufferedSerial serial_;
+  };
+
+  UnbufferedSerial uart(NC, NC, 9600);
+  auto handler = new Handler{uart};
+  uart.attach(Callback<void()>(handler, &Handler::Rx), UnbufferedSerial::RxIrq);
+
+  SUCCEED();
+}

@@ -9,9 +9,9 @@
 #include <iostream>
 
 namespace nano_stub {
-
 template <nano_hw::uart::UARTConfig Config>
 class MockUART {
+
  public:
   MockUART(nano_hw::Pin tx, nano_hw::Pin rx, int baud_rate)
       : tx_(tx), rx_(rx), baud_rate_(baud_rate) {
@@ -22,6 +22,12 @@ class MockUART {
   void Rebaud(int baud_rate) {
     baud_rate_ = baud_rate;
     std::cout << "MockUART Rebaud: " << baud_rate_ << "\n";
+  }
+
+  void Format(int data_bits, nano_hw::uart::Parity parity, int stop_bits) {
+    std::cout << "MockUART Format: data_bits " << data_bits << ", parity "
+              << static_cast<int>(parity) << ", stop_bits " << stop_bits
+              << "\n";
   }
 
   size_t Send(void* buffer, size_t size) {

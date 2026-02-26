@@ -11,6 +11,7 @@ void FreeUARTInterfaceImpl(void* inst);
 void RebaudUARTImpl(void* inst, int frequency);
 size_t SendUARTImpl(void* inst, void* buffer, size_t size);
 size_t ReceiveUARTImpl(void* inst, void* buffer, size_t size);
+void FormatUARTImpl(void* inst, int data_bits, Parity parity, int stop_bits);
 
 /// @brief UART conceptを満たす型から動的ディスパッチ関数を生成
 /// @tparam UartT UART conceptを満たすテンプレートクラス
@@ -83,6 +84,14 @@ requires UART<UartT> class UARTImpl {
         pair->second, static_cast<const uint8_t*>(buffer), size);
     return result;
   }
+
+  friend void FormatUARTImpl(void* inst, int data_bits, Parity parity,
+                             int stop_bits) {
+    auto* pair =
+        static_cast<std::pair<ImplType*, std::pair<ICallbacks*, void*>*>*>(
+            inst);
+    pair->first->Format(data_bits, parity, stop_bits);
+  }
 };
 
 // Friend-Injection で定義された関数はオブジェクトファイルに含まれないため、
@@ -103,6 +112,10 @@ size_t SendImpl(void* inst, void* buffer, size_t size) {
 }
 size_t ReceiveImpl(void* inst, void* buffer, size_t size) {
   return ReceiveUARTImpl(inst, buffer, size);
+}
+
+void FormatImpl(void* inst, int data_bits, Parity parity, int stop_bits) {
+  FormatUARTImpl(inst, data_bits, parity, stop_bits);
 }
 
 }  // namespace nano_hw::uart

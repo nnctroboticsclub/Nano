@@ -11,7 +11,13 @@
 namespace {
 namespace mbed {
 
-class UnbufferedSerial {
+class SerialBase {
+ public:
+  enum Parity { None, Odd, Even };
+  enum IrqType { RxIrq };
+};
+
+class UnbufferedSerial : public SerialBase {
  public:
   UnbufferedSerial(PinName tx, PinName rx, int baud_rate = kDefaultBaudrate)
       : dri_(ToPin(tx), ToPin(rx), baud_rate) {}
@@ -24,7 +30,9 @@ class UnbufferedSerial {
 
   void enable_output(bool enable) { enabled_output_ = enable; }
 
-  void attach(Callback<void()> cb) { rx_callback_ = cb; }
+  void attach(Callback<void()> cb, IrqType type = IrqType::RxIrq) {
+    rx_callback_ = cb;
+  }
 
   bool readable() const { return is_open_ && enabled_input_; }
 
@@ -44,6 +52,27 @@ class UnbufferedSerial {
       rx_callback_();
     }
     return bytes_read;
+  }
+
+  void format(int data_bits, SerialBase::Parity parity, int stop_bits) {
+    if (!is_open_) {
+      return;
+    }
+    nano_hw::uart::Parity hw_parity;
+    switch (parity) {
+      case SerialBase::None:
+        hw_parity = nano_hw::uart::Parity::kNone;
+        break;
+      case SerialBase::Odd:
+        hw_parity = nano_hw::uart::Parity::kOdd;
+        break;
+      case SerialBase::Even:
+        hw_parity = nano_hw::uart::Parity::kEven;
+        break;
+      default:
+        return;  // Invalid parity
+    }
+    dri_.Format(data_bits, hw_parity, stop_bits);
   }
 
  private:

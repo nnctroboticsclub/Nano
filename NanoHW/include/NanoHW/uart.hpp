@@ -19,8 +19,9 @@ enum class Parity : uint8_t {
 };
 
 template <typename T>
-concept UARTConfig = Policy<typename T::OnUARTRx, void*, const uint8_t*, size_t> &&
-                     Policy<typename T::OnUARTTx, void*, const uint8_t*, size_t>;
+concept UARTConfig =
+    Policy<typename T::OnUARTRx, void*, const uint8_t*, size_t> &&
+    Policy<typename T::OnUARTTx, void*, const uint8_t*, size_t>;
 
 struct DummyUARTConfig {
   using OnUARTRx = nano_hw::Ignore;
@@ -31,12 +32,14 @@ static_assert(UARTConfig<DummyUARTConfig>);
 template <template <UARTConfig> typename UartT>
 concept UART =
     requires(UartT<DummyUARTConfig> value, Pin transmit_pin, Pin receive_pin,
-             int frequency, void* buffer, size_t size) {
+             int frequency, void* buffer, size_t size, Parity parity) {
   {UartT<DummyUARTConfig>(transmit_pin, receive_pin, frequency)}
       ->std::same_as<UartT<DummyUARTConfig>>;
   {value.Rebaud(frequency)}->std::same_as<void>;
   {value.Send(buffer, size)}->std::same_as<size_t>;
   {value.Receive(buffer, size)}->std::same_as<size_t>;
+  {value.Format(8, parity, 1)}->std::same_as<void>;
+  {value.Format(8, parity, 2)}->std::same_as<void>;
 };
 
 struct ICallbacks {
@@ -51,6 +54,7 @@ void FreeInterface(void* interface);
 void RebaudImpl(void* interface, int frequency);
 size_t SendImpl(void* interface, void* buffer, size_t size);
 size_t ReceiveImpl(void* interface, void* buffer, size_t size);
+void FormatImpl(void* interface, int data_bits, Parity parity, int stop_bits);
 
 template <UARTConfig Config>
 class DynUART {
@@ -82,6 +86,9 @@ class DynUART {
   }
   size_t Receive(void* buffer, size_t size) {
     return ReceiveImpl(interface_, buffer, size);
+  }
+  void Format(int data_bits, Parity parity, int stop_bits) {
+    FormatImpl(interface_, data_bits, parity, stop_bits);
   }
 
  private:
