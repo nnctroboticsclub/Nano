@@ -4,7 +4,7 @@ cmake_policy(VERSION 3.25)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(ROBO_TOOLCHAIN_FILE ClangToolchain)
 
-project(Nano VERSION 1.0.0)
+project(Nano VERSION 1.0.1)
 enable_testing()
 enable_language(C CXX ASM)
 

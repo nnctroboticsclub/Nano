@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mbed.h>
-#include <Nano/no_mutex_lifo.hpp>
+#include <Nano/queue.hpp>
 #include <NanoHW/uart.hpp>
 #include <cstddef>
 
@@ -151,7 +151,7 @@ class MbedUART {
   PinName tx, rx;
   void* cb_ctx_;
 
-  Nano::collection::NoMutexLIFO<uint8_t, 32> buffer;
+  Nano::collection::Queue<uint8_t, 32> buffer;
   MbedThread thread_dispatch;
   bool is_running = false;
   bool stop_token = false;
