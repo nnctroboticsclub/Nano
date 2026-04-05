@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-#include <Nano/no_mutex_lifo.hpp>
+#include <Nano/queue.hpp>
 #include <NanoHW/can.hpp>
 
 #include "can_api.h"
@@ -177,8 +177,7 @@ class CAN {
 
  private:
   constexpr static size_t kRxQueueSize = 32;
-  Nano::collection::NoMutexLIFO<nano_hw::can::CANMessage, kRxQueueSize>
-      rx_queue;
+  Nano::collection::Queue<nano_hw::can::CANMessage, kRxQueueSize> rx_queue;
 
   Callback<void()> rx_callback;
   Callback<void()> tx_callback;

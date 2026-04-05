@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
-#include <Nano/no_mutex_lifo.hpp>
+#include <Nano/queue.hpp>
 
-using Nano::collection::NoMutexLIFO;
+using Nano::collection::Queue;
 
 constexpr size_t kBufferSize = 8;
 
 // 基本的な Push/Pop のテスト
-TEST(NoMutexLIFOTest, BasicPushPop) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, BasicPushPop) {
+  Queue<int, kBufferSize> lifo;
 
   EXPECT_TRUE(lifo.Empty());
   EXPECT_EQ(lifo.Size(), 0);
@@ -36,8 +36,8 @@ TEST(NoMutexLIFOTest, BasicPushPop) {
 }
 
 // バッファがフルになるまで Push するテスト
-TEST(NoMutexLIFOTest, FillBuffer) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, FillBuffer) {
+  Queue<int, kBufferSize> lifo;
 
   // 7個まで Push できる (N-1個)
   for (int i = 0; i < kBufferSize - 1; ++i) {
@@ -60,8 +60,8 @@ TEST(NoMutexLIFOTest, FillBuffer) {
 }
 
 // Clear のテスト
-TEST(NoMutexLIFOTest, Clear) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, Clear) {
+  Queue<int, kBufferSize> lifo;
 
   lifo.Push(1);
   lifo.Push(2);
@@ -74,8 +74,8 @@ TEST(NoMutexLIFOTest, Clear) {
 }
 
 // 空の状態で Pop するテスト
-TEST(NoMutexLIFOTest, PopFromEmpty) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, PopFromEmpty) {
+  Queue<int, kBufferSize> lifo;
 
   EXPECT_TRUE(lifo.Empty());
   EXPECT_EQ(lifo.Pop(), 0);  // デフォルト値が返される
@@ -83,8 +83,8 @@ TEST(NoMutexLIFOTest, PopFromEmpty) {
 }
 
 // PushN のテスト
-TEST(NoMutexLIFOTest, PushN) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, PushN) {
+  Queue<int, kBufferSize> lifo;
 
   std::array<int, 4> data{10, 20, 30, 40};  // NOLINT
   EXPECT_TRUE(lifo.PushN(data.data(), 4));
@@ -97,8 +97,8 @@ TEST(NoMutexLIFOTest, PushN) {
 }
 
 // PushN でキャパシティを超える場合のテスト
-TEST(NoMutexLIFOTest, PushNOverCapacity) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, PushNOverCapacity) {
+  Queue<int, kBufferSize> lifo;
 
   std::array<int, kBufferSize + 1> data = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -119,8 +119,8 @@ TEST(NoMutexLIFOTest, PushNOverCapacity) {
 }
 
 // PopNTo のテスト
-TEST(NoMutexLIFOTest, PopNTo) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, PopNTo) {
+  Queue<int, kBufferSize> lifo;
 
   int push_data[] = {10, 20, 30, 40, 50};
   lifo.PushN(push_data, 5);
@@ -138,8 +138,8 @@ TEST(NoMutexLIFOTest, PopNTo) {
 }
 
 // PopAllTo のテスト
-TEST(NoMutexLIFOTest, PopAllTo) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, PopAllTo) {
+  Queue<int, kBufferSize> lifo;
 
   int push_data[] = {100, 200, 300, 400};
   lifo.PushN(push_data, 4);
@@ -156,8 +156,8 @@ TEST(NoMutexLIFOTest, PopAllTo) {
 }
 
 // ConsumeN のテスト
-TEST(NoMutexLIFOTest, ConsumeN) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, ConsumeN) {
+  Queue<int, kBufferSize> lifo;
 
   for (int i = 0; i < 5; ++i) {
     lifo.Push(i);
@@ -175,8 +175,8 @@ TEST(NoMutexLIFOTest, ConsumeN) {
 }
 
 // operator[] のテスト
-TEST(NoMutexLIFOTest, OperatorBracket) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, OperatorBracket) {
+  Queue<int, kBufferSize> lifo;
 
   lifo.Push(10);
   lifo.Push(20);
@@ -197,8 +197,8 @@ TEST(NoMutexLIFOTest, OperatorBracket) {
 }
 
 // リングバッファのラップアラウンドテスト
-TEST(NoMutexLIFOTest, WrapAround) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, WrapAround) {
+  Queue<int, kBufferSize> lifo;
 
   // バッファをほぼ埋める
   for (int i = 0; i < kBufferSize - 1; ++i) {
@@ -228,8 +228,8 @@ TEST(NoMutexLIFOTest, WrapAround) {
 }
 
 // 異なる型のテスト
-TEST(NoMutexLIFOTest, DifferentTypes) {
-  NoMutexLIFO<double, 5> lifo;
+TEST(QueueTest, DifferentTypes) {
+  Queue<double, 5> lifo;
 
   EXPECT_TRUE(lifo.Push(1.5));
   EXPECT_TRUE(lifo.Push(2.7));
@@ -241,7 +241,7 @@ TEST(NoMutexLIFOTest, DifferentTypes) {
 }
 
 // 構造体のテスト
-TEST(NoMutexLIFOTest, StructType) {
+TEST(QueueTest, StructType) {
   struct Point {
     int x, y;
     bool operator==(const Point& other) const {
@@ -249,7 +249,7 @@ TEST(NoMutexLIFOTest, StructType) {
     }
   };
 
-  NoMutexLIFO<Point, kBufferSize> lifo;
+  Queue<Point, kBufferSize> lifo;
 
   Point p1{1, 2};
   Point p2{3, 4};
@@ -265,8 +265,8 @@ TEST(NoMutexLIFOTest, StructType) {
 }
 
 // PushN と PopNTo のラップアラウンドテスト
-TEST(NoMutexLIFOTest, PushNPopNToWrapAround) {
-  NoMutexLIFO<int, kBufferSize> lifo;
+TEST(QueueTest, PushNPopNToWrapAround) {
+  Queue<int, kBufferSize> lifo;
 
   // バッファの後半に配置
   for (int i = 0; i < 5; ++i) {

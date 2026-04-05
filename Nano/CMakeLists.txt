@@ -17,7 +17,7 @@ install(DIRECTORY include/
   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
 
-add_nano_test(NanoTest_NoMutexLIFO tests/test_no_mutex_lifo.cpp)
+add_nano_test(NanoTest_Queue tests/test_queue.cpp)
 add_nano_test(NanoTest_Span tests/test_span.cpp)
 add_nano_test(NanoTest_Singleton tests/test_singleton.cpp)
 add_nano_test(NanoTest_ManagedList tests/test_managed_list.cpp)

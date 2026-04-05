@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include <functional>
-#include "Nano/no_mutex_lifo.hpp"
+#include "Nano/queue.hpp"
 
 namespace {
 namespace mbed::details {
@@ -26,7 +26,7 @@ using ClassMethod = typename ClassMethod_Impl<T, Fn>::type;
 namespace mbed {
 template <typename T, size_t N>
 class CircularBuffer {
-  Nano::collection::NoMutexLIFO<T, N> buffer;
+  Nano::collection::Queue<T, N> buffer;
 
  public:
   void push(T value) { buffer.Push(std::move(value)); }

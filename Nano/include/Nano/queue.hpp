@@ -6,7 +6,7 @@
 
 namespace Nano::collection {
 template <typename T, size_t N>
-class NoMutexLIFO {
+class Queue {
   /**
    * 0. Initial state
    *                         N
@@ -58,7 +58,7 @@ class NoMutexLIFO {
   size_t tail_ = N - 1;
 
  public:
-  NoMutexLIFO() {
+  Queue() {
     while (!Full()) {
       Push({});
     }
