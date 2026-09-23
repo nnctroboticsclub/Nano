@@ -86,11 +86,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1772453767,
-        "narHash": "sha256-SI6ZB7hFCT/HPlG1vPrWwSp4lIdY5J4mqpysGZR1vXU=",
+        "lastModified": 1790174939,
+        "narHash": "sha256-pEj+LUUIRKWsuQkfdJYKvVS9XoiqeMf9jh1qyWxU+GM=",
         "owner": "nnctroboticsclub",
         "repo": "roboenv-nix",
-        "rev": "31caee335944808e001b6ab0217ae76eb072e3b7",
+        "rev": "3276f27844411a20222b240aa1a998500adac2fd",
         "type": "github"
       },
       "original": {
