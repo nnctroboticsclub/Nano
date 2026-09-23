@@ -3,11 +3,13 @@
 MbedOS の機能で HW を実装したものを提供します
 
 ## 使い方
+
 ### 1. プロジェクトルートの CMakeLists.txt で MbedImpl を StaticMbedOS で生成する
 
 以下のような記述をして MbedOS のターゲットに対応する MbedImpl のターゲットを作成してください
 
 ※以下の例は開発環境に NUCLEO_F446RE 向けの StaticMbedOS がインストールされていることが前提です
+
 ```cmake
 # 以下の行が無い場合は nano_hw_mbed_impl 呼び出しよりも前の好きな場所に追加する
 find_package(Nano REQUIRED)
@@ -17,6 +19,7 @@ find_package(StaticMbedOS-NUCLEO_F446RE REQUIRED)
 
 # 構文: nano_hw_mbed_impl(ImplTarget MbedTarget)
 # 役割: MbedTarget に対応する MbedImpl ターゲットを ImplTarget という名前で作成する
+# 下記の例では、 StaticMbedOS-NUCLEO_F446RE に対応する MbedImpl ターゲットを NanoHWImpl_F446RE という名前で作成している
 nano_hw_mbed_impl(NanoHWImpl_F446RE StaticMbedOS-NUCLEO_F446RE)
 ```
 
