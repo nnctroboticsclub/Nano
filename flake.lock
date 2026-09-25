@@ -2,17 +2,38 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1783375776,
-        "narHash": "sha256-pg6hLjDeAWaUOzh2JM2Cw0BwYpGtOyNr6A4FBwP9Ymo=",
+        "lastModified": 1790291545,
+        "narHash": "sha256-WQhNWIW3PPijuZexyl5Zf0tJuQ7sKt5C9WPXVO4pMuM=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "cd648d6ea62bc0ffba91e61fcfe5e33c1e2004b1",
+        "rev": "7486293a941f7b0ec123f0c431517027f705f60f",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "release-25.11",
+        "ref": "release-26.05",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "pyproject-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "roboenv",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788394333,
+        "narHash": "sha256-xYOP0Xym1eVGUaHFx+eJEaycFGoiCbst3fZf0xFHP78=",
+        "owner": "pyproject-nix",
+        "repo": "pyproject.nix",
+        "rev": "6a8a7881d75b6f98967e7b8069f4ead331384301",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pyproject-nix",
+        "repo": "pyproject.nix",
         "type": "github"
       }
     },
@@ -21,14 +42,15 @@
         "nixpkgs": [
           "nixpkgs"
         ],
+        "pyproject-nix": "pyproject-nix",
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1790310377,
-        "narHash": "sha256-JpZMlbyi7zVzwrRie8lDJ/pjf1ib1rr8UI6dz6KGxfk=",
+        "lastModified": 1790316429,
+        "narHash": "sha256-Rv5ksXhRmsxuXtqc8Ll+32JXjSYHMfZqeoR2Lknozh4=",
         "owner": "nnctroboticsclub",
         "repo": "roboenv-nix",
-        "rev": "57d2acf0f93472ba049989b0a3a91e10e3051769",
+        "rev": "cf5df2fb670629685e6786f9d00e12395553de26",
         "type": "github"
       },
       "original": {
