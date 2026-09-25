@@ -18,7 +18,7 @@
 ```diff
 {
   ...
-+ inputs.nano.url = "git+ssh://git@github.com/nnctroboticsclub/Nano";
++ inputs.nano.url = "github:nnctroboticsclub/Nano";
   ...
 
   outputs =
